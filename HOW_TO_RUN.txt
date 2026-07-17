@@ -1,0 +1,91 @@
+╔══════════════════════════════════════════════════════════════╗
+║         AFCIP — How to Run on Your Computer                  ║
+║         Anti-Financial Crime Investigation Platform          ║
+╚══════════════════════════════════════════════════════════════╝
+
+WHAT YOU NEED INSTALLED FIRST (one-time, free):
+─────────────────────────────────────────────────
+  1. Python 3.10 or newer   → https://python.org/downloads
+     ⚠️  During install, CHECK the box: "Add Python to PATH"
+
+  2. Node.js (LTS version)  → https://nodejs.org
+     (This also installs npm automatically)
+
+  3. Git (optional)         → https://git-scm.com
+
+
+HOW TO SET UP — FIRST TIME ONLY:
+─────────────────────────────────
+  1. Extract / unzip the project folder somewhere on your PC
+     e.g. C:\Projects\  or  your Desktop
+
+  2. Open the extracted folder — you will see:
+        SETUP.bat
+        START.bat
+        HOW_TO_RUN.txt       ← you are reading this
+        UBL-Project-Hackaton-main\
+
+  3. Double-click  SETUP.bat
+     → This installs all dependencies and trains the AI model
+     → Takes about 3–5 minutes on first run
+     → You will see "Setup Complete!" when done
+
+
+HOW TO RUN — EVERY TIME AFTER SETUP:
+──────────────────────────────────────
+  Just double-click  START.bat
+
+  It opens 3 terminal windows automatically:
+    Terminal 1 → FastAPI ML Engine   (port 8001)
+    Terminal 2 → Django Backend      (port 8000)
+    Terminal 3 → React Frontend      (port 5173)
+
+  Then open your browser and go to:
+    http://localhost:5173         ← Main App
+    http://localhost:8001/docs    ← AI API Swagger Docs
+    http://localhost:8000/admin   ← Django Admin Panel
+
+
+FOLDER STRUCTURE (after extraction):
+──────────────────────────────────────
+  📁 YourFolder\
+  ├── SETUP.bat           ← Run once to install everything
+  ├── START.bat           ← Run every time to launch the app
+  ├── HOW_TO_RUN.txt      ← This file
+  └── 📁 UBL-Project-Hackaton-main\
+      ├── manage.py
+      ├── api\            ← FastAPI ML engine
+      ├── apps\           ← Django apps (KYC, AML, Cases...)
+      ├── frontend\       ← React dashboard
+      └── requirements\
+
+
+COMMON PROBLEMS & FIXES:
+──────────────────────────
+  ❌ "'python' is not recognized"
+     → Python is not installed, or "Add to PATH" was not checked
+     → Reinstall Python from python.org with PATH option enabled
+
+  ❌ "'npm' is not recognized"
+     → Node.js is not installed
+     → Download and install from nodejs.org, then restart PC
+
+  ❌ SETUP.bat closes immediately with an error
+     → Right-click SETUP.bat → "Run as administrator"
+
+  ❌ Port already in use (8000 or 8001)
+     → Another program is using that port
+     → Restart your PC and try again
+
+  ❌ Frontend says "Cannot connect to server"
+     → Make sure all 3 terminal windows from START.bat are open
+     → Wait 10 seconds after running START.bat for servers to load
+
+
+URLS QUICK REFERENCE:
+──────────────────────
+  Main App        http://localhost:5173
+  Django Admin    http://localhost:8000/admin
+  FastAPI Docs    http://localhost:8001/docs
+  FastAPI ReDoc   http://localhost:8001/redoc
+

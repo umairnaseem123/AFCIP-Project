@@ -1,254 +1,453 @@
+// src/pages/Dashboard.jsx
+import {
+  AlertTriangle,
+  Download,
+  FolderOpen,
+  RefreshCw,
+  ShieldAlert,
+  Users,
+  Wifi,
+  WifiOff,
+} from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  RadialBar,
+  RadialBarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import PageLayout from "../components/layout/PageLayout";
 import { useTheme } from "../context/ThemeContext";
-import { stats, recentTransactions, weeklyTransactions, riskDistribution, monthlyTrends } from "../data/mockdata";
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from "recharts";
-import {
-  ArrowLeftRight, ShieldAlert, TriangleAlert, FolderOpen,
-  TrendingUp, TrendingDown, MoveUpRight
-} from "lucide-react";
+import { useOperationalData } from "../hooks/useOperationalData";
+import { exportToCSV } from "../utils/exportCSV";
 
-const COLORS = ["#22c55e", "#f59e0b", "#ef4444"];
+const RISK_COLORS = { High: "#f87171", Medium: "#fbbf24", Low: "#34d399" };
+const STATUS_COLORS = { Flagged: "#f87171", "Under Review": "#fbbf24", Clear: "#34d399" };
+const PIE_COLORS = ["#34d399", "#fbbf24", "#f87171"];
 
-const statCards = [
-  {
-    label: "Total Transactions",
-    value: stats.totalTransactions.toLocaleString(),
-    icon: ArrowLeftRight,
-    color: "#38bdf8",
-    borderColor: "#38bdf8",
-    trend: "+8.2%",
-    trendUp: true,
-    sub: "vs last week",
-  },
-  {
-    label: "Fraud Alerts",
-    value: stats.fraudAlerts,
-    icon: ShieldAlert,
-    color: "#f87171",
-    borderColor: "#f87171",
-    trend: "+5.9%",
-    trendUp: false,
-    sub: "vs last week",
-  },
-  {
-    label: "High Risk Accounts",
-    value: stats.highRiskAccounts,
-    icon: TriangleAlert,
-    color: "#fb923c",
-    borderColor: "#fb923c",
-    trend: "-2.1%",
-    trendUp: true,
-    sub: "vs last week",
-  },
-  {
-    label: "Open Cases",
-    value: stats.openCases,
-    icon: FolderOpen,
-    color: "#a78bfa",
-    borderColor: "#a78bfa",
-    trend: "+3 new",
-    trendUp: false,
-    sub: "since yesterday",
-  },
-];
+function currency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value || 0);
+}
 
-function StatCard({ label, value, icon: Icon, color, borderColor, trend, trendUp, sub, theme }) {
+function scoreColor(score) {
+  if (score >= 85) return "#f87171";
+  if (score >= 70) return "#fbbf24";
+  return "#34d399";
+}
+
+function Card({ title, action, children }) {
+  const { surface, border, text } = useTheme();
   return (
-    <div style={{
-      background: theme.surface,
-      border: `1px solid ${theme.border}`,
-      borderLeft: `4px solid ${borderColor}`,
-      borderRadius: "12px",
-      padding: "20px 24px",
-      flex: 1,
-      transition: "all 0.2s",
-      cursor: "default",
-    }}
-      onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
-      onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
+    <div
+      style={{
+        background: surface,
+        border: `1px solid ${border}`,
+        borderRadius: 12,
+        padding: 20,
+        display: "flex",
+        flexDirection: "column",
+        gap: 16,
+        minWidth: 0,
+      }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
-        <span style={{ color: theme.subtext, fontSize: "13px", fontWeight: "500", letterSpacing: "0.02em" }}>{label}</span>
-        <div style={{ background: `${color}18`, borderRadius: "8px", padding: "6px", display: "flex", alignItems: "center" }}>
-          <Icon size={16} color={color} />
-        </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: text }}>{title}</h3>
+        {action}
       </div>
-      <div style={{ color, fontSize: "30px", fontWeight: "700", marginBottom: "10px", letterSpacing: "-0.5px" }}>
-        {value}
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-        {trendUp
-          ? <TrendingUp size={13} color="#22c55e" />
-          : <TrendingDown size={13} color="#f87171" />
+      {children}
+    </div>
+  );
+}
+
+function Pill({ label, color }) {
+  return (
+    <span
+      style={{
+        fontSize: 12,
+        fontWeight: 600,
+        padding: "4px 10px",
+        borderRadius: 999,
+        color,
+        background: `${color}1f`,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+const Dashboard = () => {
+  const { surface, border, text, subtext, accent } = useTheme();
+  const {
+    error,
+    fraudAlerts,
+    highRiskAccounts,
+    lastUpdated,
+    loading,
+    monthlyTrends,
+    refresh,
+    riskDistribution,
+    source,
+    stats,
+    transactions,
+    weeklyTransactions,
+  } = useOperationalData();
+
+  const resolvedCount = fraudAlerts.filter((a) => a.status === "Resolved").length;
+  const resolutionRate = fraudAlerts.length
+    ? Math.round((resolvedCount / fraudAlerts.length) * 100)
+    : 0;
+  const resolutionData = [{ name: "Resolved", value: resolutionRate, fill: accent }];
+
+  const lastUpdatedLabel = lastUpdated
+    ? new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit" }).format(lastUpdated)
+    : "—";
+
+  const sortedAccounts = [...highRiskAccounts].sort((a, b) => b.riskScore - a.riskScore);
+
+  const kpis = [
+    { label: "Total Transactions", value: stats.totalTransactions.toLocaleString(), icon: Users, tint: accent },
+    { label: "Fraud Alerts", value: stats.fraudAlerts.toLocaleString(), icon: AlertTriangle, tint: "#f87171" },
+    { label: "High-Risk Accounts", value: stats.highRiskAccounts.toLocaleString(), icon: ShieldAlert, tint: "#fbbf24" },
+    { label: "Open Cases", value: stats.openCases.toLocaleString(), icon: FolderOpen, tint: "#a78bfa" },
+  ];
+
+  return (
+    <PageLayout title="Fraud Detection Dashboard">
+      <style>{`
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .table-wrap { overflow-x: auto; }
+        .spin { animation: dash-spin 0.8s linear infinite; }
+        @keyframes dash-spin { to { transform: rotate(360deg); } }
+        @media (max-width: 1024px) {
+          .chart-row, .panel-row { grid-template-columns: 1fr; }
         }
-        <span style={{ fontSize: "12px", color: trendUp ? "#22c55e" : "#f87171", fontWeight: "600" }}>{trend}</span>
-        <span style={{ fontSize: "12px", color: theme.subtext }}>{sub}</span>
-      </div>
-    </div>
-  );
-}
+        @media (max-width: 640px) {
+          .kpi-grid { grid-template-columns: 1fr 1fr; }
+        }
+      `}</style>
 
-function RiskBadge({ risk }) {
-  const colors = {
-    High: { bg: "#450a0a", color: "#f87171" },
-    Medium: { bg: "#431407", color: "#fb923c" },
-    Low: { bg: "#052e16", color: "#4ade80" },
-  };
-  const c = colors[risk] || colors.Low;
-  return (
-    <span style={{ background: c.bg, color: c.color, padding: "3px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>
-      {risk}
-    </span>
-  );
-}
-
-function StatusBadge({ status }) {
-  const colors = {
-    Flagged: { bg: "#450a0a", color: "#f87171" },
-    "Under Review": { bg: "#431407", color: "#fb923c" },
-    Clear: { bg: "#052e16", color: "#4ade80" },
-  };
-  const c = colors[status] || colors.Clear;
-  return (
-    <span style={{ background: c.bg, color: c.color, padding: "3px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>
-      {status}
-    </span>
-  );
-}
-
-function SectionHeader({ title, theme, action }) {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-      <h3 style={{ color: theme.text, fontSize: "14px", fontWeight: "600", margin: 0, letterSpacing: "0.01em" }}>{title}</h3>
-      {action && (
-        <button style={{
-          background: "none", border: "none", color: "#38bdf8", fontSize: "12px",
-          cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", padding: 0,
-        }}>
-          {action} <MoveUpRight size={12} />
+      {/* Status bar */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 12,
+          marginBottom: 20,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8, color: subtext, fontSize: 13 }}>
+          {source === "live" ? (
+            <Wifi size={15} style={{ color: "#34d399" }} />
+          ) : (
+            <WifiOff size={15} style={{ color: subtext }} />
+          )}
+          <span>{source === "live" ? "Live data" : "Demo data"}</span>
+          <span>· Updated {lastUpdatedLabel}</span>
+        </div>
+        <button
+          onClick={refresh}
+          disabled={loading}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            background: "transparent",
+            border: `1px solid ${border}`,
+            color: text,
+            borderRadius: 8,
+            padding: "6px 12px",
+            fontSize: 13,
+            cursor: loading ? "default" : "pointer",
+          }}
+        >
+          <RefreshCw size={14} className={loading ? "spin" : ""} />
+          Refresh
         </button>
+      </div>
+
+      {error && (
+        <div
+          style={{
+            background: "rgba(248,113,113,0.1)",
+            border: "1px solid rgba(248,113,113,0.4)",
+            color: "#f87171",
+            borderRadius: 10,
+            padding: "10px 16px",
+            fontSize: 13,
+            marginBottom: 20,
+          }}
+        >
+          {error} Showing demo data instead.
+        </div>
       )}
-    </div>
-  );
-}
 
-function Dashboard() {
-  const theme = useTheme();
-
-  const card = {
-    background: theme.surface,
-    border: `1px solid ${theme.border}`,
-    borderRadius: "12px",
-    padding: "24px",
-    transition: "all 0.2s",
-  };
-
-  return (
-    <PageLayout title="Dashboard">
-
-      {/* Stat Cards */}
-      <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
-        {statCards.map((s) => (
-          <StatCard key={s.label} {...s} theme={theme} />
+      {/* KPI cards */}
+      <div className="kpi-grid">
+        {kpis.map(({ label, value, icon: Icon, tint }) => (
+          <div
+            key={label}
+            style={{
+              background: surface,
+              border: `1px solid ${border}`,
+              borderRadius: 12,
+              padding: 18,
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+            }}
+          >
+            <div
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 8,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: `${tint}1f`,
+              }}
+            >
+              <Icon size={17} style={{ color: tint }} />
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: text }}>{value}</div>
+            <div style={{ fontSize: 13, color: subtext }}>{label}</div>
+          </div>
         ))}
       </div>
 
-      {/* Weekly + Risk Distribution */}
-      <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
-        <div style={{ ...card, flex: 2 }}>
-          <SectionHeader title="Weekly Transactions" theme={theme} action="View all" />
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={weeklyTransactions}>
-              <XAxis dataKey="day" stroke={theme.subtext} fontSize={12} axisLine={false} tickLine={false} />
-              <YAxis stroke={theme.subtext} fontSize={12} axisLine={false} tickLine={false} />
-              <Tooltip
-                contentStyle={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: "8px", color: theme.text, fontSize: "12px" }}
-                cursor={{ fill: theme.border + "40" }}
-              />
-              <Legend wrapperStyle={{ color: theme.subtext, fontSize: "12px" }} />
-              <Bar dataKey="transactions" fill="#38bdf8" radius={[4, 4, 0, 0]} name="Transactions" />
-              <Bar dataKey="flagged" fill="#f87171" radius={[4, 4, 0, 0]} name="Flagged" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div style={{ ...card, flex: 1 }}>
-          <SectionHeader title="Risk Distribution" theme={theme} />
-          <ResponsiveContainer width="100%" height={220}>
+      {/* Risk distribution + resolution rate */}
+      <div className="chart-row">
+        <Card title="Risk Distribution">
+          <ResponsiveContainer width="100%" height={180}>
             <PieChart>
               <Pie
                 data={riskDistribution}
                 dataKey="value"
                 nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                innerRadius={40}
-                paddingAngle={3}
-                label={({ value }) => `${value}%`}
+                innerRadius={45}
+                outerRadius={75}
+                paddingAngle={2}
               >
-                {riskDistribution.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
+                {riskDistribution.map((entry, index) => (
+                  <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                ))}
               </Pie>
-              <Tooltip contentStyle={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: "8px", color: theme.text, fontSize: "12px" }} />
-              <Legend wrapperStyle={{ color: theme.subtext, fontSize: "12px" }} />
+              <Tooltip
+                contentStyle={{ background: surface, border: `1px solid ${border}`, borderRadius: 8 }}
+                labelStyle={{ color: text }}
+              />
             </PieChart>
           </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Monthly Trends */}
-      <div style={{ ...card, marginBottom: "16px" }}>
-        <SectionHeader title="Monthly Trends — 2026" theme={theme} />
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={monthlyTrends}>
-            <CartesianGrid strokeDasharray="3 3" stroke={theme.border} vertical={false} />
-            <XAxis dataKey="month" stroke={theme.subtext} fontSize={12} axisLine={false} tickLine={false} />
-            <YAxis stroke={theme.subtext} fontSize={12} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: "8px", color: theme.text, fontSize: "12px" }} />
-            <Legend wrapperStyle={{ color: theme.subtext, fontSize: "12px" }} />
-            <Line type="monotone" dataKey="transactions" stroke="#38bdf8" strokeWidth={2.5} dot={{ fill: "#38bdf8", r: 4 }} activeDot={{ r: 6 }} name="Transactions" />
-            <Line type="monotone" dataKey="fraud" stroke="#f87171" strokeWidth={2.5} dot={{ fill: "#f87171", r: 4 }} activeDot={{ r: 6 }} name="Fraud Cases" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Recent Transactions */}
-      <div style={card}>
-        <SectionHeader title="Recent Transactions" theme={theme} action="View all" />
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-          <thead>
-            <tr style={{ borderBottom: `1px solid ${theme.border}` }}>
-              {["ID", "Account", "Amount", "Type", "Status", "Risk", "Date"].map(h => (
-                <th key={h} style={{
-                  color: theme.subtext, textAlign: "left", padding: "10px 12px",
-                  fontWeight: "500", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em",
-                }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {recentTransactions.slice(0, 6).map((tx, i) => (
-              <tr
-                key={tx.id}
-                style={{ borderBottom: `1px solid ${theme.border}`, transition: "background 0.15s" }}
-                onMouseEnter={e => e.currentTarget.style.background = theme.border + "30"}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-              >
-                <td style={{ padding: "13px 12px", color: "#38bdf8", fontWeight: "600", fontFamily: "monospace" }}>{tx.id}</td>
-                <td style={{ padding: "13px 12px", color: theme.text }}>{tx.account}</td>
-                <td style={{ padding: "13px 12px", color: theme.text, fontWeight: "500" }}>PKR {tx.amount.toLocaleString()}</td>
-                <td style={{ padding: "13px 12px", color: theme.subtext }}>{tx.type}</td>
-                <td style={{ padding: "13px 12px" }}><StatusBadge status={tx.status} /></td>
-                <td style={{ padding: "13px 12px" }}><RiskBadge risk={tx.risk} /></td>
-                <td style={{ padding: "13px 12px", color: theme.subtext }}>{tx.date}</td>
-              </tr>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            {riskDistribution.map((entry, index) => (
+              <div key={entry.name} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: subtext }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: PIE_COLORS[index % PIE_COLORS.length] }} />
+                {entry.name}: {entry.value}%
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </Card>
+
+        <Card title="Alert Resolution Rate">
+          <div style={{ position: "relative" }}>
+            <ResponsiveContainer width="100%" height={180}>
+              <RadialBarChart
+                data={resolutionData}
+                innerRadius="70%"
+                outerRadius="100%"
+                startAngle={90}
+                endAngle={-270}
+              >
+                <RadialBar dataKey="value" cornerRadius={10} background={{ fill: border }} />
+              </RadialBarChart>
+            </ResponsiveContainer>
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ fontSize: 26, fontWeight: 700, color: text }}>{resolutionRate}%</div>
+              <div style={{ fontSize: 12, color: subtext }}>resolved</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: subtext, textAlign: "center" }}>
+            {resolvedCount} of {fraudAlerts.length} alerts closed
+          </div>
+        </Card>
       </div>
 
+      {/* Weekly + monthly trends */}
+      <div className="chart-row">
+        <Card title="Weekly Transaction Volume">
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={weeklyTransactions}>
+              <CartesianGrid stroke={border} vertical={false} />
+              <XAxis dataKey="day" stroke={subtext} fontSize={12} />
+              <YAxis stroke={subtext} fontSize={12} />
+              <Tooltip contentStyle={{ background: surface, border: `1px solid ${border}`, borderRadius: 8 }} labelStyle={{ color: text }} />
+              <Bar dataKey="transactions" fill={accent} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="flagged" fill="#f87171" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+
+        <Card title="Monthly Trends">
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={monthlyTrends}>
+              <CartesianGrid stroke={border} vertical={false} />
+              <XAxis dataKey="month" stroke={subtext} fontSize={12} />
+              <YAxis stroke={subtext} fontSize={12} />
+              <Tooltip contentStyle={{ background: surface, border: `1px solid ${border}`, borderRadius: 8 }} labelStyle={{ color: text }} />
+              <Line type="monotone" dataKey="transactions" stroke={accent} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="fraud" stroke="#f87171" strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+
+      {/* Alerts + high-risk accounts */}
+      <div className="panel-row">
+        <Card title="Active Fraud Alerts">
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {fraudAlerts.map((alert) => (
+              <div key={alert.id} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: text }}>
+                  <span>{alert.account} · {alert.type}</span>
+                  <Pill
+                    label={alert.status}
+                    color={alert.status === "Resolved" ? "#34d399" : alert.status === "Open" ? "#f87171" : "#fbbf24"}
+                  />
+                </div>
+                <div style={{ height: 6, borderRadius: 999, background: border, overflow: "hidden" }}>
+                  <div
+                    style={{
+                      height: "100%",
+                      width: `${alert.probability}%`,
+                      background: alert.probability >= 80 ? "#f87171" : alert.probability >= 60 ? "#fbbf24" : "#34d399",
+                    }}
+                  />
+                </div>
+                <div style={{ fontSize: 11, color: subtext }}>
+                  {alert.probability}% fraud probability · {alert.date}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card title="High-Risk Accounts">
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {sortedAccounts.map((acc) => (
+              <div key={acc.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: text }}>{acc.name}</div>
+                  <div style={{ fontSize: 11, color: subtext }}>
+                    {acc.id} · {acc.transactions} txns · {acc.flagged} flagged
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: scoreColor(acc.riskScore),
+                    background: `${scoreColor(acc.riskScore)}1f`,
+                    borderRadius: 8,
+                    padding: "4px 10px",
+                  }}
+                >
+                  {acc.riskScore}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Recent transactions */}
+      <div style={{ marginTop: 16 }}>
+        <Card
+          title="Recent Transactions"
+          action={
+            <button
+              onClick={() => exportToCSV(transactions, "transactions.csv")}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                background: accent,
+                border: "none",
+                color: "#0f172a",
+                borderRadius: 8,
+                padding: "6px 12px",
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              <Download size={14} />
+              Export CSV
+            </button>
+          }
+        >
+          <div className="table-wrap">
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ textAlign: "left", color: subtext, borderBottom: `1px solid ${border}` }}>
+                  <th style={{ padding: "8px 10px" }}>ID</th>
+                  <th style={{ padding: "8px 10px" }}>Account</th>
+                  <th style={{ padding: "8px 10px" }}>Type</th>
+                  <th style={{ padding: "8px 10px" }}>Amount</th>
+                  <th style={{ padding: "8px 10px" }}>Status</th>
+                  <th style={{ padding: "8px 10px" }}>Risk</th>
+                  <th style={{ padding: "8px 10px" }}>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.map((tx) => (
+                  <tr key={tx.id} style={{ borderBottom: `1px solid ${border}` }}>
+                    <td style={{ padding: "8px 10px", color: text }}>{tx.id}</td>
+                    <td style={{ padding: "8px 10px", color: text }}>{tx.account}</td>
+                    <td style={{ padding: "8px 10px", color: subtext }}>{tx.type}</td>
+                    <td style={{ padding: "8px 10px", color: text }}>{currency(tx.amount)}</td>
+                    <td style={{ padding: "8px 10px" }}>
+                      <Pill label={tx.status} color={STATUS_COLORS[tx.status] || subtext} />
+                    </td>
+                    <td style={{ padding: "8px 10px" }}>
+                      <Pill label={tx.risk} color={RISK_COLORS[tx.risk] || subtext} />
+                    </td>
+                    <td style={{ padding: "8px 10px", color: subtext }}>{tx.date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </div>
     </PageLayout>
   );
-}
+};
 
 export default Dashboard;

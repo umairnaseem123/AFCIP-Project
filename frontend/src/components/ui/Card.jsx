@@ -1,6 +1,6 @@
 import { useTheme } from "../../context/ThemeContext";
 
-const Card = ({ title, children, className = "", style = {} }) => {
+const Card = ({ title, children, style = {} }) => {
   const theme = useTheme();
   return (
     <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: "12px", padding: "24px", transition: "all 0.3s", ...style }}>

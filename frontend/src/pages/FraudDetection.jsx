@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PageLayout from "../components/layout/PageLayout";
-import { fraudAlerts, recentTransactions } from "../data/mockdata";
+import { useOperationalData } from "../hooks/useOperationalData";
 import { useTheme } from "../context/ThemeContext";
 
 function ProbabilityBar({ value }) {
@@ -21,7 +21,8 @@ function StatusBadge({ status }) {
 function FraudDetection() {
   const [selected, setSelected] = useState(null);
   const theme = useTheme();
-  const suspiciousTx = recentTransactions.filter((tx) => tx.risk === "High" || tx.status === "Flagged");
+  const { fraudAlerts, transactions } = useOperationalData();
+  const suspiciousTx = transactions.filter((tx) => tx.risk === "High" || tx.status === "Flagged");
 
   return (
     <PageLayout title="Fraud Detection">

@@ -1,7 +1,4 @@
-import { useTheme } from "../../context/ThemeContext";
-
-const Badge = ({ text, type }) => {
-  const { isDark } = useTheme();
+const Badge = ({ text }) => {
   const styles = {
     High:           { bg: "#450a0a", color: "#f87171" },
     Critical:       { bg: "#450a0a", color: "#f87171" },

@@ -1,5 +1,5 @@
 import PageLayout from "../components/layout/PageLayout";
-import { highRiskAccounts, riskDistribution } from "../data/mockdata";
+import { useOperationalData } from "../hooks/useOperationalData";
 import { useTheme } from "../context/ThemeContext";
 import { RadialBarChart, RadialBar, PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
@@ -7,7 +7,7 @@ const COLORS = ["#22c55e", "#f59e0b", "#ef4444"];
 
 function RiskLevelBadge({ score }) {
   if (score >= 80) return <span style={{ background: "#450a0a", color: "#f87171", padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>High Risk</span>;
-  if (score >= 60) return <span style={{ background: "#431407", color: "#fb923c", padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>Medium Risk</span>;
+  if (score >= 60) return <span style={{ background: "#221f1e", color: "#fb923c", padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>Medium Risk</span>;
   return <span style={{ background: "#052e16", color: "#4ade80", padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>Low Risk</span>;
 }
 
@@ -22,11 +22,46 @@ function ScoreBar({ score }) {
 
 function RiskScoring() {
   const theme = useTheme();
-  const avgScore = Math.round(highRiskAccounts.reduce((a, b) => a + b.riskScore, 0) / highRiskAccounts.length);
+  const { error, highRiskAccounts, lastUpdated, loading, riskDistribution, source } = useOperationalData();
+
+  const safeAccounts = highRiskAccounts && highRiskAccounts.length ? highRiskAccounts : [];
+  const avgScore = safeAccounts.length
+    ? Math.round(safeAccounts.reduce((a, b) => a + b.riskScore, 0) / safeAccounts.length)
+    : 0;
   const radialData = [{ name: "Risk Score", value: avgScore, fill: avgScore >= 80 ? "#ef4444" : avgScore >= 60 ? "#f59e0b" : "#22c55e" }];
+
+  // NOTE: The "Risk Level Indicators" percentages below are now derived
+  // from `riskDistribution` (transaction-level risk, the same data source
+  // that feeds the pie chart) instead of averaging `highRiskAccounts`
+  // (account-level risk). Averaging account-level scores collapses every
+  // transaction for an account into a single number, which made the
+  // indicators show 0% Medium/High whenever there was only one account in
+  // the system — even though individual transactions clearly carried
+  // medium/high risk (as the pie chart correctly showed). Using the same
+  // transaction-level source for both keeps this page internally
+  // consistent.
+  const riskPercentByName = (riskDistribution || []).reduce((acc, item) => {
+    acc[item.name] = item.value;
+    return acc;
+  }, {});
+  const lowPercent = riskPercentByName["Low Risk"] ?? 0;
+  const medPercent = riskPercentByName["Medium Risk"] ?? 0;
+  const highPercent = riskPercentByName["High Risk"] ?? 0;
 
   return (
     <PageLayout title="Risk Scoring">
+
+      <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "12px" }}>
+        Source: {source === "live" ? "Backend API" : "Demo fallback"} · Last updated: {lastUpdated.toLocaleTimeString()}
+      </div>
+      {error && (
+        <div style={{ color: "#fbbf24", background: "#422006", border: "1px solid #854d0e", borderRadius: "8px", padding: "10px 14px", marginBottom: "16px", fontSize: "13px" }}>
+          Backend not reachable yet. Showing demo data until the API responds.
+        </div>
+      )}
+      {loading && (
+        <div style={{ color: theme.subtext, marginBottom: "12px", fontSize: "13px" }}>Syncing latest backend data...</div>
+      )}
 
       {/* Top Row */}
       <div style={{ display: "flex", gap: "20px", marginBottom: "28px", flexWrap: "wrap" }}>
@@ -68,9 +103,9 @@ function RiskScoring() {
           <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "20px" }}>Risk Level Indicators</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             {[
-              { label: "Low Risk", range: "Score 0 – 59", color: "#4ade80", bg: "#052e16", count: "62% of accounts" },
-              { label: "Medium Risk", range: "Score 60 – 79", color: "#fb923c", bg: "#431407", count: "25% of accounts" },
-              { label: "High Risk", range: "Score 80 – 100", color: "#f87171", bg: "#450a0a", count: "13% of accounts" },
+              { label: "Low Risk", range: "Score 0 – 59", color: "#4ade80", bg: "#052e16", count: `${lowPercent}% of transactions` },
+              { label: "Medium Risk", range: "Score 60 – 79", color: "#fb923c", bg: "#431407", count: `${medPercent}% of transactions` },
+              { label: "High Risk", range: "Score 80 – 100", color: "#f87171", bg: "#450a0a", count: `${highPercent}% of transactions` },
             ].map((item) => (
               <div key={item.label} style={{ background: item.bg, borderRadius: "10px", padding: "14px 16px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -92,23 +127,26 @@ function RiskScoring() {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${theme.border}` }}>
-              {["Account ID", "Name", "Risk Score", "Score Bar", "Transactions", "Flagged", "Risk Level"].map((h) => (
+              {["Account", "Risk Score", "Score Bar", "Transactions", "Flagged", "Risk Level"].map((h) => (
                 <th key={h} style={{ color: theme.subtext, textAlign: "left", padding: "10px 12px", fontWeight: "500" }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {highRiskAccounts.map((acc) => (
-              <tr key={acc.id} style={{ borderBottom: `1px solid ${theme.border}` }}>
-                <td style={{ padding: "14px 12px", color: "#38bdf8" }}>{acc.id}</td>
-                <td style={{ padding: "14px 12px", color: theme.text }}>{acc.name}</td>
-                <td style={{ padding: "14px 12px", color: acc.riskScore >= 80 ? "#f87171" : "#fb923c", fontWeight: "700", fontSize: "16px" }}>{acc.riskScore}</td>
-                <td style={{ padding: "14px 12px", minWidth: "140px" }}><ScoreBar score={acc.riskScore} /></td>
-                <td style={{ padding: "14px 12px", color: theme.text }}>{acc.transactions}</td>
-                <td style={{ padding: "14px 12px", color: "#f87171", fontWeight: "600" }}>{acc.flagged}</td>
-                <td style={{ padding: "14px 12px" }}><RiskLevelBadge score={acc.riskScore} /></td>
-              </tr>
-            ))}
+            {safeAccounts.length === 0 ? (
+              <tr><td colSpan={6} style={{ color: theme.subtext, textAlign: "center", padding: "32px" }}>No high-risk accounts found</td></tr>
+            ) : (
+              safeAccounts.map((acc) => (
+                <tr key={acc.id} style={{ borderBottom: `1px solid ${theme.border}` }}>
+                  <td style={{ padding: "14px 12px", color: theme.text }}>{acc.name}</td>
+                  <td style={{ padding: "14px 12px", color: acc.riskScore >= 80 ? "#f87171" : "#fb923c", fontWeight: "700", fontSize: "16px" }}>{acc.riskScore}</td>
+                  <td style={{ padding: "14px 12px", minWidth: "140px" }}><ScoreBar score={acc.riskScore} /></td>
+                  <td style={{ padding: "14px 12px", color: theme.text }}>{acc.transactions}</td>
+                  <td style={{ padding: "14px 12px", color: "#f87171", fontWeight: "600" }}>{acc.flagged}</td>
+                  <td style={{ padding: "14px 12px" }}><RiskLevelBadge score={acc.riskScore} /></td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

@@ -5,7 +5,7 @@ import Navbar from "./Navbar";
 import { useTheme } from "../../context/ThemeContext";
 
 const PageLayout = ({ children, title }) => {
-  const { bg, text, border, navBg } = useTheme();
+  const { bg, text } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (

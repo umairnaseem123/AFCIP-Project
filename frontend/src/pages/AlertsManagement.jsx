@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PageLayout from "../components/layout/PageLayout";
-import { fraudAlerts } from "../data/mockdata";
+import { useOperationalData } from "../hooks/useOperationalData";
 import { useTheme } from "../context/ThemeContext";
+import { playFraudAlertSound } from "../utils/playAlertSound";
+import { Volume2, VolumeX } from "lucide-react";
 
 function StatusBadge({ status }) {
   const colors = {
@@ -24,15 +26,47 @@ function ProbabilityBar({ value }) {
 
 function AlertsManagement() {
   const theme = useTheme();
-  const [alerts, setAlerts] = useState(fraudAlerts);
-  const [selected, setSelected] = useState(null);
+  const { fraudAlerts } = useOperationalData();
+  const [statusOverrides, setStatusOverrides] = useState({});
+  const [selectedId, setSelectedId] = useState(null);
   const [filterStatus, setFilterStatus] = useState("All");
+
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const saved = localStorage.getItem("afcip_sound_alerts_enabled");
+    return saved === null ? true : saved === "true";
+  });
+  const previousOpenCount = useRef(null);
+
+  useEffect(() => {
+    localStorage.setItem("afcip_sound_alerts_enabled", soundEnabled);
+  }, [soundEnabled]);
+
+  const alerts = useMemo(() => fraudAlerts.map((alert) => ({
+    ...alert,
+    status: statusOverrides[alert.id] || alert.status,
+  })), [fraudAlerts, statusOverrides]);
+
+  // Play a chime whenever the number of "Open" alerts increases (new fraud detected).
+  useEffect(() => {
+    const openCount = alerts.filter((a) => a.status === "Open").length;
+
+    if (previousOpenCount.current === null) {
+      previousOpenCount.current = openCount;
+      return;
+    }
+
+    if (openCount > previousOpenCount.current && soundEnabled) {
+      playFraudAlertSound();
+    }
+    previousOpenCount.current = openCount;
+  }, [alerts, soundEnabled]);
+
+  const selected = alerts.find((alert) => alert.id === selectedId) || null;
 
   const filtered = alerts.filter((a) => filterStatus === "All" || a.status === filterStatus);
 
   const updateStatus = (id, newStatus) => {
-    setAlerts((prev) => prev.map((a) => a.id === id ? { ...a, status: newStatus } : a));
-    setSelected((prev) => prev ? { ...prev, status: newStatus } : prev);
+    setStatusOverrides((prev) => ({ ...prev, [id]: newStatus }));
   };
 
   const statCards = [
@@ -44,6 +78,21 @@ function AlertsManagement() {
 
   return (
     <PageLayout title="Alerts Management">
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "12px" }}>
+        <button
+          onClick={() => setSoundEnabled((prev) => !prev)}
+          title={soundEnabled ? "Mute fraud alert sound" : "Unmute fraud alert sound"}
+          style={{
+            display: "flex", alignItems: "center", gap: "6px",
+            background: theme.surface, border: `1px solid ${theme.border}`,
+            borderRadius: "8px", padding: "8px 14px", cursor: "pointer",
+            color: soundEnabled ? "#38bdf8" : theme.subtext, fontSize: "13px", fontWeight: "600",
+          }}
+        >
+          {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+          {soundEnabled ? "Sound Alerts On" : "Sound Alerts Off"}
+        </button>
+      </div>
       <div style={{ display: "flex", gap: "16px", marginBottom: "28px" }}>
         {statCards.map((card) => (
           <div key={card.label} style={{ flex: 1, background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: "12px", padding: "20px" }}>
@@ -67,7 +116,7 @@ function AlertsManagement() {
       <div style={{ display: "flex", gap: "20px" }}>
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "12px" }}>
           {filtered.map((alert) => (
-            <div key={alert.id} onClick={() => setSelected(alert)} style={{
+            <div key={alert.id} onClick={() => setSelectedId(alert.id)} style={{
               background: theme.surface,
               border: selected?.id === alert.id ? "1px solid #38bdf8" : `1px solid ${theme.border}`,
               borderRadius: "12px", padding: "18px", cursor: "pointer", transition: "all 0.2s",

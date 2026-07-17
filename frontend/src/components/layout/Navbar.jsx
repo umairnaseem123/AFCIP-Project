@@ -1,7 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import { Search, Bell, Sun, Moon, User, Settings, LogOut, Menu } from "lucide-react";
+import { clearAuth } from "../../services/api";
+
+function LiveClock() {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+      <span style={{ color: "#38bdf8", fontSize: "15px", fontWeight: "700", fontFamily: "monospace", letterSpacing: "1px" }}>
+        {time.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+      </span>
+      <span style={{ color: "#64748b", fontSize: "10px" }}>
+        {time.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" })}
+      </span>
+    </div>
+  );
+}
 
 const Navbar = ({ title = "Dashboard", onMenuClick }) => {
   const navigate = useNavigate();
@@ -10,47 +30,27 @@ const Navbar = ({ title = "Dashboard", onMenuClick }) => {
   const [showUser, setShowUser] = useState(false);
   const { isDark, toggle, navBg, surface, border, text, subtext, accent } = useTheme();
 
-  const now = new Date().toLocaleDateString("en-US", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric"
-  });
-
   const notifications = [
     { id: 1, text: "High risk transaction detected", time: "2 min ago", color: "#f87171" },
-    { id: 2, text: "New fraud alert: AC-4821", time: "15 min ago", color: "#fb923c" },
-    { id: 3, text: "Case CS001 updated", time: "1 hr ago", color: accent },
+    { id: 2, text: "New fraud alert flagged", time: "15 min ago", color: "#fb923c" },
+    { id: 3, text: "System scan completed", time: "1 hr ago", color: accent },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    navigate("/login");
-  };
+  const handleLogout = () => { clearAuth(); navigate("/login"); };
 
   const btnStyle = {
-    background: surface,
-    border: `1px solid ${border}`,
-    borderRadius: "8px",
-    padding: "8px 10px",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "all 0.2s",
-    color: subtext,
+    background: surface, border: `1px solid ${border}`, borderRadius: "8px",
+    padding: "8px 10px", cursor: "pointer", display: "flex",
+    alignItems: "center", justifyContent: "center",
+    transition: "all 0.2s", color: subtext,
   };
 
   return (
     <div style={{
-      background: navBg,
-      borderBottom: `1px solid ${border}`,
-      padding: "12px 24px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      position: "sticky",
-      top: 0,
-      zIndex: 100,
-      transition: "all 0.3s",
-      gap: "12px",
+      background: navBg, borderBottom: `1px solid ${border}`,
+      padding: "12px 24px", display: "flex", alignItems: "center",
+      justifyContent: "space-between", position: "sticky", top: 0,
+      zIndex: 100, transition: "all 0.3s", gap: "12px",
     }}>
       <style>{`
         @media (max-width: 768px) {
@@ -67,12 +67,16 @@ const Navbar = ({ title = "Dashboard", onMenuClick }) => {
         </button>
         <div>
           <h2 style={{ color: text, fontSize: "16px", fontWeight: "600", margin: 0, whiteSpace: "nowrap" }}>{title}</h2>
-          <span style={{ color: subtext, fontSize: "12px" }} className="nav-date">{now}</span>
         </div>
       </div>
 
       {/* Right */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", position: "relative", flexShrink: 0 }}>
+
+        {/* Live Clock */}
+        <div className="nav-date" style={{ marginRight: "8px" }}>
+          <LiveClock />
+        </div>
 
         {/* Search */}
         <div style={{ position: "relative" }} className="nav-search">
@@ -120,7 +124,7 @@ const Navbar = ({ title = "Dashboard", onMenuClick }) => {
         <div style={{ position: "relative" }}>
           <div onClick={() => { setShowUser(!showUser); setShowNotif(false); }}
             style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", background: surface, border: `1px solid ${border}`, borderRadius: "8px", padding: "6px 12px", transition: "all 0.3s" }}>
-            <div style={{ width: "28px", height: "28px", background: "#2563eb", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "700", fontSize: "13px" }}>A</div>
+            <div style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #2563eb, #38bdf8)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "700", fontSize: "13px" }}>A</div>
             <div className="nav-date">
               <div style={{ color: text, fontSize: "13px", fontWeight: "600" }}>Admin</div>
               <div style={{ color: subtext, fontSize: "11px" }}>Super Admin</div>

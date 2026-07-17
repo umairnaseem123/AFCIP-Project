@@ -2,6 +2,24 @@ import { useState } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useTheme } from "../context/ThemeContext";
 
+const Toggle = ({ value, onChange, theme }) => (
+  <div
+    onClick={() => onChange(!value)}
+    style={{
+      width: "44px", height: "24px", borderRadius: "24px",
+      background: value ? "#2563eb" : theme.border,
+      position: "relative", cursor: "pointer", transition: "background 0.2s", flexShrink: 0,
+    }}
+  >
+    <div style={{
+      position: "absolute", top: "3px",
+      left: value ? "23px" : "3px",
+      width: "18px", height: "18px", borderRadius: "50%",
+      background: "white", transition: "left 0.2s",
+    }} />
+  </div>
+);
+
 function Settings() {
   const theme = useTheme();
   const [profile, setProfile] = useState({
@@ -39,24 +57,6 @@ function Settings() {
     padding: "24px",
     transition: "all 0.3s",
   };
-
-  const Toggle = ({ value, onChange }) => (
-    <div
-      onClick={() => onChange(!value)}
-      style={{
-        width: "44px", height: "24px", borderRadius: "24px",
-        background: value ? "#2563eb" : theme.border,
-        position: "relative", cursor: "pointer", transition: "background 0.2s", flexShrink: 0,
-      }}
-    >
-      <div style={{
-        position: "absolute", top: "3px",
-        left: value ? "23px" : "3px",
-        width: "18px", height: "18px", borderRadius: "50%",
-        background: "white", transition: "left 0.2s",
-      }} />
-    </div>
-  );
 
   return (
     <PageLayout title="Settings">
@@ -134,7 +134,7 @@ function Settings() {
                 <div style={{ color: theme.text, fontSize: "14px" }}>Dark Mode</div>
                 <div style={{ color: theme.subtext, fontSize: "12px" }}>Switch between dark and light theme</div>
               </div>
-              <Toggle value={theme.isDark} onChange={theme.toggle} />
+              <Toggle value={theme.isDark} onChange={theme.toggle} theme={theme} />
             </div>
 
             {[
@@ -147,7 +147,7 @@ function Settings() {
                   <div style={{ color: theme.text, fontSize: "14px" }}>{label}</div>
                   <div style={{ color: theme.subtext, fontSize: "12px" }}>{desc}</div>
                 </div>
-                <Toggle value={notifications[key]} onChange={v => setNotifications(p => ({ ...p, [key]: v }))} />
+                <Toggle value={notifications[key]} onChange={v => setNotifications(p => ({ ...p, [key]: v }))} theme={theme} />
               </div>
             ))}
           </div>
