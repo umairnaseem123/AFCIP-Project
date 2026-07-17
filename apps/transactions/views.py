@@ -151,3 +151,18 @@ class TransactionViewSet(viewsets.ModelViewSet):
         
         return fraud_reason  # ← ye line pehle se hai
         
+
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from .network_graph import build_transaction_network
+
+
+class TransactionNetworkView(APIView):
+    """Returns nodes/edges for transaction network graph visualization."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        limit = int(request.query_params.get('limit', 100))
+        user_id = request.query_params.get('user_id')
+        data = build_transaction_network(user_id=user_id, limit=limit)
+        return Response(data)

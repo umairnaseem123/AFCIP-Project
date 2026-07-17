@@ -1,10 +1,10 @@
-import { NavLink, useNavigate } from "react-router-dom";
+﻿import { NavLink, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import { clearAuth } from "../../services/api";
 import { useOperationalData } from "../../hooks/useOperationalData";
 import {
   LayoutDashboard, ArrowLeftRight, ShieldAlert,
-  Target, Bell, FolderOpen, FileText, Settings, LogOut, UserCheck,
+  Target, Bell, FolderOpen, FileText, Settings, LogOut, UserCheck, Share2,
 } from "lucide-react";
 
 function AfcipLogo() {
@@ -66,6 +66,7 @@ const Sidebar = ({ onClose }) => {
     { path: "/alerts",          label: "Alerts",          icon: Bell,            badge: openAlerts || null },
     { path: "/cases",           label: "Case Management", icon: FolderOpen,      badge: stats?.openCases || null },
     { path: "/reports",         label: "Reports",         icon: FileText,        badge: null },
+    { path: "/network",          label: "Network Graph",   icon: Share2,          badge: null },
     { path: "/settings",        label: "Settings",        icon: Settings,        badge: null },
   ];
 
@@ -92,7 +93,7 @@ const Sidebar = ({ onClose }) => {
           </div>
         </div>
         {onClose && (
-          <button onClick={onClose} style={{ background: "none", border: "none", color: subtext, cursor: "pointer", fontSize: "18px", padding: "4px" }}>✕</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: subtext, cursor: "pointer", fontSize: "18px", padding: "4px" }}>âœ•</button>
         )}
       </div>
 
@@ -155,7 +156,7 @@ const Sidebar = ({ onClose }) => {
 
       {/* Version */}
       <div style={{ padding: "6px 18px", textAlign: "center" }}>
-        <span style={{ color: subtext, fontSize: "10px", letterSpacing: "0.05em" }}>v1.0.0 · Hackathon Build</span>
+        <span style={{ color: subtext, fontSize: "10px", letterSpacing: "0.05em" }}>v1.0.0 Â· Hackathon Build</span>
       </div>
 
       {/* Logout */}

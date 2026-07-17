@@ -228,3 +228,8 @@ export function addCaseNote(caseId, note) {
     body: JSON.stringify({ note }),
   });
 }
+
+
+export function getTransactionNetwork(limit = 100) {
+  return apiRequest(`/transactions/network/?limit=${limit}`);
+}

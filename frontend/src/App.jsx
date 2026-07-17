@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+﻿import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 import Login from "./pages/Login";
@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import KYCManagement from "./pages/KYCManagement";
 import ComplianceCenter from "./pages/ComplianceCenter";
 import AuditTrail from "./pages/AuditTrail";
+import NetworkGraph from "./pages/NetworkGraph";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/kyc" element={<ProtectedRoute><KYCManagement /></ProtectedRoute>} />
         <Route path="/compliance" element={<ProtectedRoute><ComplianceCenter /></ProtectedRoute>} />
         <Route path="/audit-trail" element={<ProtectedRoute><AuditTrail /></ProtectedRoute>} />
+                    <Route path="/network" element={<ProtectedRoute><NetworkGraph /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

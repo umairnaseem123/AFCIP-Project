@@ -1,4 +1,4 @@
-"""Network graph for transaction relationship mapping."""
+﻿"""Network graph for transaction relationship mapping."""
 from django.db.models import Count
 from collections import defaultdict
 
@@ -29,15 +29,19 @@ def build_transaction_network(user_id=None, limit=100):
             }
         nodes[uid]['transaction_count'] += 1
         nodes[uid]['total_amount'] += float(txn.amount)
-        if txn.is_fraud:
+        txn_is_fraud = (txn.fraud_probability or 0) >= 70 or txn.risk_level == 'HIGH'
+        if txn_is_fraud:
             nodes[uid]['is_flagged'] = True
+            nodes[f'txn_{txn.id}'] = {'id': f'txn_{txn.id}', 'label': f'PKR {txn.amount}', 'type': 'transaction', 'transaction_count': 1, 'total_amount': float(txn.amount), 'is_flagged': True}
+        else:
+            nodes[f'txn_{txn.id}'] = {'id': f'txn_{txn.id}', 'label': f'PKR {txn.amount}', 'type': 'transaction', 'transaction_count': 1, 'total_amount': float(txn.amount), 'is_flagged': False}
 
         edges.append({
             'id': f'txn_{txn.id}',
             'source': f'user_{uid}',
             'target': f'txn_{txn.id}',
             'label': f'PKR {txn.amount}',
-            'is_fraud': txn.is_fraud,
+            'is_fraud': txn_is_fraud,
             'amount': float(txn.amount),
             'timestamp': txn.created_at.isoformat(),
         })
