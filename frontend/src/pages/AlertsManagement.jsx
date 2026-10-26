@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useOperationalData } from "../hooks/useOperationalData";
 import { useTheme } from "../context/ThemeContext";
@@ -126,7 +126,7 @@ function AlertsManagement() {
                 <StatusBadge status={alert.status} />
               </div>
               <div style={{ color: theme.text, fontSize: "15px", fontWeight: "500", marginBottom: "4px" }}>{alert.type}</div>
-              <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "10px" }}>{alert.account} · {alert.date}</div>
+              <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "10px" }}>{alert.account} Â· {alert.date}</div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
                 <span style={{ color: theme.subtext, fontSize: "12px" }}>Fraud Probability</span>
                 <span style={{ color: alert.probability >= 80 ? "#f87171" : "#fb923c", fontSize: "13px", fontWeight: "700" }}>{alert.probability}%</span>
@@ -167,7 +167,7 @@ function AlertsManagement() {
                       background: selected.status === s ? "#1e3a5f" : theme.bg,
                       color: selected.status === s ? "#38bdf8" : theme.subtext,
                     }}>
-                      {s === "Open" ? "🔴" : s === "In Progress" ? "🟠" : "🟢"} Mark as {s}
+                      {s === "Open" ? "ðŸ”´" : s === "In Progress" ? "ðŸŸ " : "ðŸŸ¢"} Mark as {s}
                     </button>
                   ))}
                 </div>

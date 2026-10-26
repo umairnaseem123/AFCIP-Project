@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx
+﻿// src/pages/Dashboard.jsx
 import {
   AlertTriangle,
   Download,
@@ -115,7 +115,7 @@ const Dashboard = () => {
 
   const lastUpdatedLabel = lastUpdated
     ? new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit" }).format(lastUpdated)
-    : "—";
+    : "â€”";
 
   const sortedAccounts = [...highRiskAccounts].sort((a, b) => b.riskScore - a.riskScore);
 
@@ -161,7 +161,7 @@ const Dashboard = () => {
             <WifiOff size={15} style={{ color: subtext }} />
           )}
           <span>{source === "live" ? "Live data" : "Demo data"}</span>
-          <span>· Updated {lastUpdatedLabel}</span>
+          <span>Â· Updated {lastUpdatedLabel}</span>
         </div>
         <button
           onClick={refresh}
@@ -335,7 +335,7 @@ const Dashboard = () => {
             {fraudAlerts.map((alert) => (
               <div key={alert.id} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: text }}>
-                  <span>{alert.account} · {alert.type}</span>
+                  <span>{alert.account} Â· {alert.type}</span>
                   <Pill
                     label={alert.status}
                     color={alert.status === "Resolved" ? "#34d399" : alert.status === "Open" ? "#f87171" : "#fbbf24"}
@@ -351,7 +351,7 @@ const Dashboard = () => {
                   />
                 </div>
                 <div style={{ fontSize: 11, color: subtext }}>
-                  {alert.probability}% fraud probability · {alert.date}
+                  {alert.probability}% fraud probability Â· {alert.date}
                 </div>
               </div>
             ))}
@@ -365,7 +365,7 @@ const Dashboard = () => {
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: text }}>{acc.name}</div>
                   <div style={{ fontSize: 11, color: subtext }}>
-                    {acc.id} · {acc.transactions} txns · {acc.flagged} flagged
+                    {acc.id} Â· {acc.transactions} txns Â· {acc.flagged} flagged
                   </div>
                 </div>
                 <div

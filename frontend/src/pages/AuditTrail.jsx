@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+﻿import { useEffect, useState, useCallback, useMemo } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useTheme } from "../context/ThemeContext";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 function ActionBadge({ action }) {
   const colors = {
@@ -14,7 +14,7 @@ function ActionBadge({ action }) {
   const c = colors[(action || "").toLowerCase()] || { bg: "#1e293b", color: "#94a3b8" };
   return (
     <span style={{ background: c.bg, color: c.color, padding: "3px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: "600", textTransform: "capitalize" }}>
-      {action || "—"}
+      {action || "â€”"}
     </span>
   );
 }
@@ -126,9 +126,9 @@ function AuditTrail() {
                   <tr key={log.id} onClick={() => setSelected(log)} style={{ borderBottom: "1px solid #0f172a", cursor: "pointer", background: selected?.id === log.id ? "#0f172a" : "transparent" }}>
                     <td style={{ padding: "12px", color: "#38bdf8", fontWeight: "600" }}>{log.user || log.user_name || "System"}</td>
                     <td style={{ padding: "12px" }}><ActionBadge action={log.action} /></td>
-                    <td style={{ padding: "12px", color: "white" }}>{log.resource || "—"}</td>
-                    <td style={{ padding: "12px", color: theme.subtext }}>{log.ip_address || "—"}</td>
-                    <td style={{ padding: "12px", color: theme.subtext }}>{log.created_at ? new Date(log.created_at).toLocaleString() : "—"}</td>
+                    <td style={{ padding: "12px", color: "white" }}>{log.resource || "â€”"}</td>
+                    <td style={{ padding: "12px", color: theme.subtext }}>{log.ip_address || "â€”"}</td>
+                    <td style={{ padding: "12px", color: theme.subtext }}>{log.created_at ? new Date(log.created_at).toLocaleString() : "â€”"}</td>
                   </tr>
                 ))
               )}
@@ -144,9 +144,9 @@ function AuditTrail() {
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               {[
                 { label: "User", value: selected.user || selected.user_name || "System", color: "#38bdf8" },
-                { label: "Resource", value: selected.resource || "—" },
-                { label: "IP Address", value: selected.ip_address || "—" },
-                { label: "Time", value: selected.created_at ? new Date(selected.created_at).toLocaleString() : "—" },
+                { label: "Resource", value: selected.resource || "â€”" },
+                { label: "IP Address", value: selected.ip_address || "â€”" },
+                { label: "Time", value: selected.created_at ? new Date(selected.created_at).toLocaleString() : "â€”" },
               ].map(({ label, value, color }) => (
                 <div key={label} style={{ borderBottom: `1px solid ${theme.border}`, paddingBottom: "12px" }}>
                   <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "4px" }}>{label}</div>
@@ -179,3 +179,4 @@ function AuditTrail() {
 }
 
 export default AuditTrail;
+

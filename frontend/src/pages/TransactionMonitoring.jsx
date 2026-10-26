@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useOperationalData } from "../hooks/useOperationalData";
 import { exportToCSV } from "../utils/exportCSV";
@@ -27,7 +27,7 @@ function KYCBadge({ status, isPep }) {
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
       <span style={{ background: c.bg, color: c.color, padding: "3px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>{label}</span>
-      {isPep && <span style={{ background: "#450a0a", color: "#f87171", padding: "3px 6px", borderRadius: "20px", fontSize: "11px", fontWeight: "600" }}>PEP⚠️</span>}
+      {isPep && <span style={{ background: "#450a0a", color: "#f87171", padding: "3px 6px", borderRadius: "20px", fontSize: "11px", fontWeight: "600" }}>PEPâš ï¸</span>}
     </span>
   );
 }
@@ -44,7 +44,7 @@ function CreateTransactionModal({ onClose, onSuccess }) {
     setResult(null);
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api"}/transactions/`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || "/api"}/transactions/`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ ...form, amount: parseFloat(form.amount) }),
@@ -75,7 +75,7 @@ function CreateTransactionModal({ onClose, onSuccess }) {
       <div style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: "16px", padding: "32px", width: "460px", maxWidth: "90vw" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
           <h2 style={{ color: "white", margin: 0, fontSize: "18px" }}>Create Transaction</h2>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "20px", cursor: "pointer" }}>✕</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "20px", cursor: "pointer" }}>âœ•</button>
         </div>
 
         {!result ? (
@@ -90,7 +90,7 @@ function CreateTransactionModal({ onClose, onSuccess }) {
             <div style={{ marginBottom: "16px" }}>
               <label style={{ color: "#94a3b8", fontSize: "13px", display: "block", marginBottom: "6px" }}>Amount (PKR)</label>
               <input style={inputStyle} type="number" placeholder="e.g. 50000" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
-              <div style={{ color: "#64748b", fontSize: "12px", marginTop: "4px" }}>⚠️ Amount over 500,000 will be flagged as fraud</div>
+              <div style={{ color: "#64748b", fontSize: "12px", marginTop: "4px" }}>âš ï¸ Amount over 500,000 will be flagged as fraud</div>
             </div>
             <div style={{ marginBottom: "24px" }}>
               <label style={{ color: "#94a3b8", fontSize: "13px", display: "block", marginBottom: "6px" }}>Description</label>
@@ -108,13 +108,13 @@ function CreateTransactionModal({ onClose, onSuccess }) {
           </>
         ) : (
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>{isFraud ? "🚨" : "✅"}</div>
+            <div style={{ fontSize: "48px", marginBottom: "16px" }}>{isFraud ? "ðŸš¨" : "âœ…"}</div>
             <div style={{ color: isFraud ? "#f87171" : "#4ade80", fontSize: "20px", fontWeight: "700", marginBottom: "8px" }}>
               {isFraud ? "FRAUD DETECTED!" : "Transaction Successful!"}
             </div>
             {result.fraud_reason && (
               <div style={{ color: "#fb923c", background: "#431407", border: "1px solid #9a3412", borderRadius: "8px", padding: "10px", marginBottom: "16px", fontSize: "13px" }}>
-                🔍 Fraud Reason: {result.fraud_reason}
+                ðŸ” Fraud Reason: {result.fraud_reason}
               </div>
             )}
             <div style={{ color: "#94a3b8", fontSize: "14px", marginBottom: "8px" }}>Reference: <span style={{ color: "#38bdf8" }}>{result.reference}</span></div>
@@ -206,7 +206,7 @@ function TransactionMonitoring() {
       </div>
 
       <div style={{ color: "#64748b", fontSize: "12px", marginBottom: "12px" }}>
-        Source: {source === "live" ? "Backend API" : "Demo fallback"} · Last updated: {lastUpdated.toLocaleTimeString()}
+        Source: {source === "live" ? "Backend API" : "Demo fallback"} Â· Last updated: {lastUpdated.toLocaleTimeString()}
       </div>
       {error && (
         <div style={{ color: "#fbbf24", background: "#422006", border: "1px solid #854d0e", borderRadius: "8px", padding: "10px 14px", marginBottom: "16px", fontSize: "13px" }}>
@@ -238,7 +238,7 @@ function TransactionMonitoring() {
                     <td style={{ padding: "12px", color: "#38bdf8", fontWeight: "600" }}>{tx.id}</td>
                     <td style={{ padding: "12px", color: "white" }}>{tx.account}</td>
                     <td style={{ padding: "12px" }}>
-                      <div style={{ fontSize: "12px", color: "#94a3b8" }}>{tx.kyc_name || "—"}</div>
+                      <div style={{ fontSize: "12px", color: "#94a3b8" }}>{tx.kyc_name || "â€”"}</div>
                       <KYCBadge status={tx.kyc_status} isPep={tx.kyc_is_pep} />
                     </td>
                     <td style={{ padding: "12px", color: "white" }}>PKR {tx.amount?.toLocaleString()}</td>
@@ -297,3 +297,4 @@ function TransactionMonitoring() {
 }
 
 export default TransactionMonitoring;
+

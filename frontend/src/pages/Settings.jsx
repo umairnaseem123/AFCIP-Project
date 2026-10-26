@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useTheme } from "../context/ThemeContext";
 
@@ -64,7 +64,7 @@ function Settings() {
 
         {/* Profile */}
         <div style={cardStyle}>
-          <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "20px" }}>👤 Profile Information</h3>
+          <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "20px" }}>ðŸ‘¤ Profile Information</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             {[
               { label: "Full Name", key: "name" },
@@ -96,7 +96,7 @@ function Settings() {
               padding: "12px", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer", marginTop: "8px",
               transition: "background 0.3s",
             }}>
-              {saved ? "✅ Saved!" : "Save Changes"}
+              {saved ? "âœ… Saved!" : "Save Changes"}
             </button>
           </div>
         </div>
@@ -104,14 +104,14 @@ function Settings() {
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {/* Security */}
           <div style={cardStyle}>
-            <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "20px" }}>🔒 Security</h3>
+            <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "20px" }}>ðŸ”’ Security</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               {["Current Password", "New Password", "Confirm Password"].map(label => (
                 <div key={label}>
                   <label style={{ color: theme.subtext, fontSize: "12px", marginBottom: "6px", display: "block" }}>{label}</label>
                   <input
                     type="password"
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     style={inputStyle}
                     onFocus={e => e.target.style.borderColor = "#38bdf8"}
                     onBlur={e => e.target.style.borderColor = theme.border}
@@ -126,7 +126,7 @@ function Settings() {
 
           {/* Preferences */}
           <div style={cardStyle}>
-            <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "20px" }}>⚙️ Preferences</h3>
+            <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "20px" }}>âš™ï¸ Preferences</h3>
 
             {/* Theme */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", paddingBottom: "16px", borderBottom: `1px solid ${theme.border}` }}>
@@ -154,7 +154,7 @@ function Settings() {
 
           {/* System Info */}
           <div style={cardStyle}>
-            <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "16px" }}>🖥️ System Information</h3>
+            <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "16px" }}>ðŸ–¥ï¸ System Information</h3>
             {[
               { label: "Version", value: "AFCIP v2.1.0" },
               { label: "Last Login", value: "2026-06-17 09:15 AM" },
@@ -174,3 +174,4 @@ function Settings() {
 }
 
 export default Settings;
+

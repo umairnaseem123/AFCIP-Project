@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useTheme } from "../context/ThemeContext";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 function PriorityBadge({ priority }) {
   const colors = {
@@ -32,7 +32,7 @@ function StatusBadge({ status }) {
   );
 }
 
-// ── New Case Modal ──────────────────────────────────────────────────────────
+// â”€â”€ New Case Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function NewCaseModal({ theme, onClose, onCreate }) {
   const [form, setForm] = useState({ title: "", account: "", priority: "Medium", description: "" });
   const [loading, setLoading] = useState(false);
@@ -88,7 +88,7 @@ function NewCaseModal({ theme, onClose, onCreate }) {
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h3 style={{ color: theme.text, fontSize: "16px", margin: 0 }}>New Case Banao</h3>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: theme.subtext, fontSize: "20px", cursor: "pointer" }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: theme.subtext, fontSize: "20px", cursor: "pointer" }}>Ã—</button>
         </div>
 
         {[
@@ -139,7 +139,7 @@ function NewCaseModal({ theme, onClose, onCreate }) {
             disabled={loading}
             style={{ flex: 1, padding: "10px", borderRadius: "8px", background: "#2563eb", border: "none", color: "white", cursor: "pointer", fontSize: "13px", fontWeight: "600" }}
           >
-            {loading ? "Bana raha hai..." : "✅ Case Banao"}
+            {loading ? "Bana raha hai..." : "âœ… Case Banao"}
           </button>
         </div>
       </div>
@@ -147,7 +147,7 @@ function NewCaseModal({ theme, onClose, onCreate }) {
   );
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
+// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CaseManagement() {
   const theme = useTheme();
   const [cases, setCases]           = useState([]);
@@ -160,7 +160,7 @@ function CaseManagement() {
   const [showModal, setShowModal]   = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
 
-  // ── Fetch all cases ──
+  // â”€â”€ Fetch all cases â”€â”€
   const fetchCases = useCallback(async () => {
     setLoading(true);
     try {
@@ -180,7 +180,7 @@ function CaseManagement() {
     }
   }, []);
 
-  // ── Fetch notes for selected case ──
+  // â”€â”€ Fetch notes for selected case â”€â”€
   const fetchNotes = useCallback(async (caseId) => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -198,7 +198,7 @@ function CaseManagement() {
   useEffect(() => { fetchCases(); }, [fetchCases]);
   useEffect(() => { if (selected) fetchNotes(selected.id); }, [selected, fetchNotes]);
 
-  // ── Update status ──
+  // â”€â”€ Update status â”€â”€
   const updateStatus = async (id, newStatus) => {
     setUpdatingId(id);
     try {
@@ -219,7 +219,7 @@ function CaseManagement() {
     }
   };
 
-  // ── Add note ──
+  // â”€â”€ Add note â”€â”€
   const addNote = async () => {
     if (!newNote.trim() || !selected) return;
     try {
@@ -244,7 +244,7 @@ function CaseManagement() {
     }
   };
 
-  // ── When new case is created ──
+  // â”€â”€ When new case is created â”€â”€
   const handleCaseCreated = (newCase) => {
     setCases(prev => [newCase, ...prev]);
   };
@@ -325,7 +325,7 @@ function CaseManagement() {
               <div style={{ color: theme.text, fontSize: "15px", fontWeight: "500", marginBottom: "6px" }}>{c.title}</div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ color: theme.subtext, fontSize: "12px" }}>
-                  {c.account} · {c.date || c.created_at?.split("T")[0]}
+                  {c.account} Â· {c.date || c.created_at?.split("T")[0]}
                 </span>
                 <PriorityBadge priority={c.priority} />
               </div>
@@ -347,7 +347,7 @@ function CaseManagement() {
                   { label: "Title",       value: selected.title },
                   { label: "Account",     value: selected.account },
                   { label: "Date Opened", value: selected.date || selected.created_at?.split("T")[0] },
-                  { label: "Description", value: selected.description || "—" },
+                  { label: "Description", value: selected.description || "â€”" },
                 ].map(({ label, value, color }) => (
                   <div key={label} style={{ borderBottom: `1px solid ${theme.border}`, paddingBottom: "12px" }}>
                     <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "4px" }}>{label}</div>
@@ -428,3 +428,4 @@ function CaseManagement() {
 }
 
 export default CaseManagement;
+

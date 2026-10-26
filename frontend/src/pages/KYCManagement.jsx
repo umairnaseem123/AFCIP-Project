@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useTheme } from "../context/ThemeContext";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 function StatusBadge({ status }) {
   const colors = {
@@ -22,7 +22,7 @@ function StatusBadge({ status }) {
 function FlagPill({ flagged, label }) {
   return (
     <span style={{ color: flagged ? "#f87171" : "#4ade80", fontSize: "13px", fontWeight: "600" }}>
-      {flagged ? `${label} ⚠️` : "Clear"}
+      {flagged ? `${label} âš ï¸` : "Clear"}
     </span>
   );
 }
@@ -138,7 +138,7 @@ function KYCManagement() {
                     style={{ borderBottom: `1px solid ${theme.border}`, cursor: "pointer", background: selected?.id === p.id ? "#0f172a" : "transparent" }}
                   >
                     <td style={{ padding: "12px", color: "#38bdf8", fontWeight: "600" }}>{p.full_name || p.customer_name || `Customer #${p.id}`}</td>
-                    <td style={{ padding: "12px", color: theme.subtext }}>{p.cnic || "—"}</td>
+                    <td style={{ padding: "12px", color: theme.subtext }}>{p.cnic || "â€”"}</td>
                     <td style={{ padding: "12px" }}><StatusBadge status={p.status} /></td>
                     <td style={{ padding: "12px" }}><FlagPill flagged={p.is_pep} label="PEP" /></td>
                     <td style={{ padding: "12px" }}><FlagPill flagged={p.is_sanctioned} label="Sanctioned" /></td>
@@ -158,13 +158,13 @@ function KYCManagement() {
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               {[
                 { label: "Customer",       value: selected.full_name || selected.customer_name || `Customer #${selected.id}`, color: "#38bdf8" },
-                { label: "Email",          value: selected.email || "—" },
-                { label: "CNIC",           value: selected.cnic || "—" },
-                { label: "Phone",          value: selected.phone_number || "—" },
-                { label: "Address",        value: selected.address || "—" },
-                { label: "Nationality",    value: selected.nationality || "—" },
-                { label: "Risk Level",     value: selected.risk_level || "—" },
-                { label: "Verified At",    value: selected.verified_at ? new Date(selected.verified_at).toLocaleString() : "—" },
+                { label: "Email",          value: selected.email || "â€”" },
+                { label: "CNIC",           value: selected.cnic || "â€”" },
+                { label: "Phone",          value: selected.phone_number || "â€”" },
+                { label: "Address",        value: selected.address || "â€”" },
+                { label: "Nationality",    value: selected.nationality || "â€”" },
+                { label: "Risk Level",     value: selected.risk_level || "â€”" },
+                { label: "Verified At",    value: selected.verified_at ? new Date(selected.verified_at).toLocaleString() : "â€”" },
               ].map(({ label, value, color }) => (
                 <div key={label} style={{ borderBottom: `1px solid ${theme.border}`, paddingBottom: "12px" }}>
                   <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "4px" }}>{label}</div>
@@ -184,7 +184,7 @@ function KYCManagement() {
                 disabled={!!actionId || selected.status === "verified"}
                 style={{ background: "#166534", border: "none", borderRadius: "8px", padding: "10px", color: "white", fontSize: "13px", fontWeight: "600", cursor: selected.status === "verified" ? "not-allowed" : "pointer", opacity: selected.status === "verified" ? 0.5 : 1 }}
               >
-                {actionId === `${selected.id}-verify` ? "Verifying..." : "✅ Verify"}
+                {actionId === `${selected.id}-verify` ? "Verifying..." : "âœ… Verify"}
               </button>
 
               <button
@@ -192,7 +192,7 @@ function KYCManagement() {
                 disabled={!!actionId || selected.status === "rejected"}
                 style={{ background: "#450a0a", border: "none", borderRadius: "8px", padding: "10px", color: "#f87171", fontSize: "13px", fontWeight: "600", cursor: selected.status === "rejected" ? "not-allowed" : "pointer", opacity: selected.status === "rejected" ? 0.5 : 1 }}
               >
-                {actionId === `${selected.id}-reject` ? "Rejecting..." : "❌ Reject"}
+                {actionId === `${selected.id}-reject` ? "Rejecting..." : "âŒ Reject"}
               </button>
 
               <button
@@ -200,7 +200,7 @@ function KYCManagement() {
                 disabled={!!actionId}
                 style={{ background: "#1e293b", border: "1px solid #f87171", borderRadius: "8px", padding: "10px", color: "#f87171", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
               >
-                {actionId === `${selected.id}-flag-pep` ? "Updating..." : selected.is_pep ? "🚩 Remove PEP Flag" : "🚩 Flag as PEP"}
+                {actionId === `${selected.id}-flag-pep` ? "Updating..." : selected.is_pep ? "ðŸš© Remove PEP Flag" : "ðŸš© Flag as PEP"}
               </button>
             </div>
           )}
@@ -211,3 +211,4 @@ function KYCManagement() {
 }
 
 export default KYCManagement;
+

@@ -1,4 +1,4 @@
-import PageLayout from "../components/layout/PageLayout";
+﻿import PageLayout from "../components/layout/PageLayout";
 import { useOperationalData } from "../hooks/useOperationalData";
 import { useTheme } from "../context/ThemeContext";
 import { RadialBarChart, RadialBar, PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
@@ -36,7 +36,7 @@ function RiskScoring() {
   // (account-level risk). Averaging account-level scores collapses every
   // transaction for an account into a single number, which made the
   // indicators show 0% Medium/High whenever there was only one account in
-  // the system — even though individual transactions clearly carried
+  // the system â€” even though individual transactions clearly carried
   // medium/high risk (as the pie chart correctly showed). Using the same
   // transaction-level source for both keeps this page internally
   // consistent.
@@ -52,7 +52,7 @@ function RiskScoring() {
     <PageLayout title="Risk Scoring">
 
       <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "12px" }}>
-        Source: {source === "live" ? "Backend API" : "Demo fallback"} · Last updated: {lastUpdated.toLocaleTimeString()}
+        Source: {source === "live" ? "Backend API" : "Demo fallback"} Â· Last updated: {lastUpdated.toLocaleTimeString()}
       </div>
       {error && (
         <div style={{ color: "#fbbf24", background: "#422006", border: "1px solid #854d0e", borderRadius: "8px", padding: "10px 14px", marginBottom: "16px", fontSize: "13px" }}>
@@ -103,9 +103,9 @@ function RiskScoring() {
           <h3 style={{ color: theme.text, fontSize: "15px", marginBottom: "20px" }}>Risk Level Indicators</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             {[
-              { label: "Low Risk", range: "Score 0 – 59", color: "#4ade80", bg: "#052e16", count: `${lowPercent}% of transactions` },
-              { label: "Medium Risk", range: "Score 60 – 79", color: "#fb923c", bg: "#431407", count: `${medPercent}% of transactions` },
-              { label: "High Risk", range: "Score 80 – 100", color: "#f87171", bg: "#450a0a", count: `${highPercent}% of transactions` },
+              { label: "Low Risk", range: "Score 0 â€“ 59", color: "#4ade80", bg: "#052e16", count: `${lowPercent}% of transactions` },
+              { label: "Medium Risk", range: "Score 60 â€“ 79", color: "#fb923c", bg: "#431407", count: `${medPercent}% of transactions` },
+              { label: "High Risk", range: "Score 80 â€“ 100", color: "#f87171", bg: "#450a0a", count: `${highPercent}% of transactions` },
             ].map((item) => (
               <div key={item.label} style={{ background: item.bg, borderRadius: "10px", padding: "14px 16px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

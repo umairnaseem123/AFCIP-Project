@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useOperationalData } from "../hooks/useOperationalData";
 import { useTheme } from "../context/ThemeContext";
@@ -53,7 +53,7 @@ function FraudDetection() {
                   <StatusBadge status={alert.status} />
                 </div>
                 <div style={{ color: theme.text, fontSize: "14px", marginBottom: "4px" }}>{alert.type}</div>
-                <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "10px" }}>{alert.account} · {alert.date}</div>
+                <div style={{ color: theme.subtext, fontSize: "12px", marginBottom: "10px" }}>{alert.account} Â· {alert.date}</div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
                   <span style={{ color: theme.subtext, fontSize: "12px" }}>Fraud Probability</span>
                   <span style={{ color: alert.probability >= 80 ? "#f87171" : alert.probability >= 60 ? "#fb923c" : "#4ade80", fontSize: "13px", fontWeight: "700" }}>{alert.probability}%</span>
@@ -123,3 +123,4 @@ function FraudDetection() {
 }
 
 export default FraudDetection;
+

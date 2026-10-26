@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { exportToCSV } from "../utils/exportCSV";
 import { useOperationalData } from "../hooks/useOperationalData";
@@ -14,7 +14,7 @@ const typeColors = {
 const REPORT_TYPES  = ["Summary", "Activity", "Risk Analysis", "Analysis", "Audit"];
 const FILTER_TYPES  = ["All", ...REPORT_TYPES];
 
-// ── helpers ───────────────────────────────────────────────────────────────────
+// â”€â”€ helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function todayStr() {
   return new Intl.DateTimeFormat("en-CA").format(new Date());
 }
@@ -65,7 +65,7 @@ function summarizeData(type, data, fraudAlerts, transactions) {
   }
 }
 
-// ── Generate Report Modal ─────────────────────────────────────────────────────
+// â”€â”€ Generate Report Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function GenerateModal({ onClose, onGenerate, transactions, fraudAlerts, source }) {
   const [name, setName]   = useState("");
   const [type, setType]   = useState("Summary");
@@ -97,11 +97,11 @@ function GenerateModal({ onClose, onGenerate, transactions, fraudAlerts, source 
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:"20px" }}>
       <div onClick={e => e.stopPropagation()} style={{ background:"#1e293b", border:"1px solid #334155", borderRadius:"16px", padding:"32px", width:"100%", maxWidth:"480px", position:"relative" }}>
-        <button onClick={onClose} style={{ position:"absolute", top:"16px", right:"16px", background:"#334155", border:"none", borderRadius:"6px", color:"#94a3b8", fontSize:"18px", cursor:"pointer", width:"32px", height:"32px" }}>×</button>
+        <button onClick={onClose} style={{ position:"absolute", top:"16px", right:"16px", background:"#334155", border:"none", borderRadius:"6px", color:"#94a3b8", fontSize:"18px", cursor:"pointer", width:"32px", height:"32px" }}>Ã—</button>
 
         <h2 style={{ color:"white", fontSize:"18px", fontWeight:"700", marginBottom:"6px" }}>+ Generate Report</h2>
         <p style={{ color:"#64748b", fontSize:"13px", marginBottom:"24px" }}>
-          Data source: <span style={{ color: source === "live" ? "#4ade80" : "#fb923c", fontWeight:"600" }}>{source === "live" ? "🟢 Live API" : "🟡 Demo Data"}</span>
+          Data source: <span style={{ color: source === "live" ? "#4ade80" : "#fb923c", fontWeight:"600" }}>{source === "live" ? "ðŸŸ¢ Live API" : "ðŸŸ¡ Demo Data"}</span>
         </p>
 
         {/* Name */}
@@ -146,14 +146,14 @@ function GenerateModal({ onClose, onGenerate, transactions, fraudAlerts, source 
 
         <div style={{ display:"flex", gap:"10px" }}>
           <button onClick={onClose} style={{ flex:1, background:"#334155", border:"none", borderRadius:"8px", padding:"12px", color:"white", fontSize:"14px", cursor:"pointer" }}>Cancel</button>
-          <button onClick={handleSubmit} style={{ flex:2, background:"#2563eb", border:"none", borderRadius:"8px", padding:"12px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"700" }}>⚡ Generate</button>
+          <button onClick={handleSubmit} style={{ flex:2, background:"#2563eb", border:"none", borderRadius:"8px", padding:"12px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"700" }}>âš¡ Generate</button>
         </div>
       </div>
     </div>
   );
 }
 
-// ── View Report Modal ─────────────────────────────────────────────────────────
+// â”€â”€ View Report Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ViewReportModal({ report, onClose, onPrint }) {
   if (!report) return null;
   const tc = typeColors[report.type] || { bg:"#1e293b", color:"#94a3b8" };
@@ -161,12 +161,12 @@ function ViewReportModal({ report, onClose, onPrint }) {
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:"20px" }}>
       <div onClick={e => e.stopPropagation()} style={{ background:"#1e293b", border:"1px solid #334155", borderRadius:"16px", padding:"32px", width:"100%", maxWidth:"640px", maxHeight:"82vh", overflowY:"auto", position:"relative" }}>
-        <button onClick={onClose} style={{ position:"absolute", top:"16px", right:"16px", background:"#334155", border:"none", borderRadius:"6px", color:"#94a3b8", fontSize:"18px", cursor:"pointer", width:"32px", height:"32px" }}>×</button>
+        <button onClick={onClose} style={{ position:"absolute", top:"16px", right:"16px", background:"#334155", border:"none", borderRadius:"6px", color:"#94a3b8", fontSize:"18px", cursor:"pointer", width:"32px", height:"32px" }}>Ã—</button>
 
         <div style={{ marginBottom:"20px" }}>
           <span style={{ background:tc.bg, color:tc.color, padding:"3px 12px", borderRadius:"20px", fontSize:"12px", fontWeight:"600" }}>{report.type}</span>
           <h2 style={{ color:"white", fontSize:"20px", fontWeight:"700", marginTop:"12px", marginBottom:"4px" }}>{report.name}</h2>
-          <p style={{ color:"#64748b", fontSize:"13px" }}>{report.id} · {report.generatedDate} · {report.author}</p>
+          <p style={{ color:"#64748b", fontSize:"13px" }}>{report.id} Â· {report.generatedDate} Â· {report.author}</p>
         </div>
 
         {/* Summary */}
@@ -185,7 +185,7 @@ function ViewReportModal({ report, onClose, onPrint }) {
         {report.data && report.data.length > 0 && (
           <div style={{ overflowX:"auto", marginBottom:"16px" }}>
             <p style={{ color:"#475569", fontSize:"12px", marginBottom:"8px", textTransform:"uppercase", letterSpacing:"0.05em" }}>
-              Preview — first 10 of {report.data.length} records
+              Preview â€” first 10 of {report.data.length} records
             </p>
             <table style={{ width:"100%", borderCollapse:"collapse", fontSize:"12px" }}>
               <thead>
@@ -199,7 +199,7 @@ function ViewReportModal({ report, onClose, onPrint }) {
                 {report.data.slice(0, 10).map((row, i) => (
                   <tr key={i} style={{ borderBottom:"1px solid #1e293b" }}>
                     {Object.values(row).map((val, j) => (
-                      <td key={j} style={{ color:"#cbd5e1", padding:"8px 10px", whiteSpace:"nowrap" }}>{String(val ?? "—")}</td>
+                      <td key={j} style={{ color:"#cbd5e1", padding:"8px 10px", whiteSpace:"nowrap" }}>{String(val ?? "â€”")}</td>
                     ))}
                   </tr>
                 ))}
@@ -209,7 +209,7 @@ function ViewReportModal({ report, onClose, onPrint }) {
         )}
 
         <div style={{ display:"flex", gap:"10px", marginTop:"8px" }}>
-          <button onClick={() => onPrint(report)} style={{ flex:1, background:"#334155", border:"none", borderRadius:"8px", padding:"10px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>🖨️ Print</button>
+          <button onClick={() => onPrint(report)} style={{ flex:1, background:"#334155", border:"none", borderRadius:"8px", padding:"10px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>ðŸ–¨ï¸ Print</button>
           <button onClick={onClose} style={{ flex:1, background:"#2563eb", border:"none", borderRadius:"8px", padding:"10px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>Close</button>
         </div>
       </div>
@@ -217,7 +217,7 @@ function ViewReportModal({ report, onClose, onPrint }) {
   );
 }
 
-// ── Print Preview Modal ───────────────────────────────────────────────────────
+// â”€â”€ Print Preview Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function PrintModal({ report, onClose }) {
   if (!report) return null;
 
@@ -262,17 +262,17 @@ function PrintModal({ report, onClose }) {
   <div class="header">
     <div class="badge">${report.type}</div>
     <h1>${report.name}</h1>
-    <p class="meta">${report.id} &nbsp;·&nbsp; Generated: ${report.generatedDate} &nbsp;·&nbsp; Author: ${report.author} &nbsp;·&nbsp; ${report.cases} records &nbsp;·&nbsp; ${report.fileSize}</p>
+    <p class="meta">${report.id} &nbsp;Â·&nbsp; Generated: ${report.generatedDate} &nbsp;Â·&nbsp; Author: ${report.author} &nbsp;Â·&nbsp; ${report.cases} records &nbsp;Â·&nbsp; ${report.fileSize}</p>
   </div>
   ${summaryHtml ? `<div class="summary">${summaryHtml}</div>` : ""}
   ${headers.length > 0 ? `
   <p class="section-title">Showing first 50 of ${report.data.length} records</p>
   <table>
     <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>
-    <tbody>${rows.map(row => `<tr>${Object.values(row).map(v => `<td>${String(v ?? "—")}</td>`).join("")}</tr>`).join("")}</tbody>
+    <tbody>${rows.map(row => `<tr>${Object.values(row).map(v => `<td>${String(v ?? "â€”")}</td>`).join("")}</tr>`).join("")}</tbody>
   </table>` : ""}
   <div class="footer">
-    <span>AFCIP Intelligence Platform — Confidential</span>
+    <span>AFCIP Intelligence Platform â€” Confidential</span>
     <span>Printed: ${new Date().toLocaleString()}</span>
   </div>
   <script>window.onload = () => window.print();<\/script>
@@ -284,32 +284,32 @@ function PrintModal({ report, onClose }) {
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:"20px" }}>
       <div onClick={e => e.stopPropagation()} style={{ background:"#1e293b", border:"1px solid #334155", borderRadius:"16px", padding:"32px", width:"100%", maxWidth:"440px", textAlign:"center", position:"relative" }}>
-        <button onClick={onClose} style={{ position:"absolute", top:"16px", right:"16px", background:"#334155", border:"none", borderRadius:"6px", color:"#94a3b8", fontSize:"18px", cursor:"pointer", width:"32px", height:"32px" }}>×</button>
+        <button onClick={onClose} style={{ position:"absolute", top:"16px", right:"16px", background:"#334155", border:"none", borderRadius:"6px", color:"#94a3b8", fontSize:"18px", cursor:"pointer", width:"32px", height:"32px" }}>Ã—</button>
 
-        <div style={{ fontSize:"48px", marginBottom:"16px" }}>🖨️</div>
+        <div style={{ fontSize:"48px", marginBottom:"16px" }}>ðŸ–¨ï¸</div>
         <h2 style={{ color:"white", fontSize:"18px", fontWeight:"700", marginBottom:"8px" }}>Print Report</h2>
         <p style={{ color:"#94a3b8", fontSize:"14px", marginBottom:"6px" }}>{report.name}</p>
         <p style={{ color:"#64748b", fontSize:"13px", marginBottom:"24px" }}>
-          {report.cases} records · {report.fileSize} · {report.generatedDate}
+          {report.cases} records Â· {report.fileSize} Â· {report.generatedDate}
         </p>
 
         <div style={{ background:"#0f172a", borderRadius:"10px", padding:"14px", marginBottom:"24px", border:"1px solid #1e293b", textAlign:"left" }}>
           <p style={{ color:"#475569", fontSize:"12px", marginBottom:"10px", textTransform:"uppercase" }}>Print includes</p>
           {["Report header & metadata", "Summary statistics", "First 50 data records", "AFCIP confidential footer"].map(item => (
-            <div key={item} style={{ color:"#94a3b8", fontSize:"13px", marginBottom:"6px" }}>✓ {item}</div>
+            <div key={item} style={{ color:"#94a3b8", fontSize:"13px", marginBottom:"6px" }}>âœ“ {item}</div>
           ))}
         </div>
 
         <div style={{ display:"flex", gap:"10px" }}>
           <button onClick={onClose} style={{ flex:1, background:"#334155", border:"none", borderRadius:"8px", padding:"12px", color:"white", fontSize:"14px", cursor:"pointer" }}>Cancel</button>
-          <button onClick={handlePrint} style={{ flex:2, background:"#2563eb", border:"none", borderRadius:"8px", padding:"12px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"700" }}>🖨️ Open Print Dialog</button>
+          <button onClick={handlePrint} style={{ flex:2, background:"#2563eb", border:"none", borderRadius:"8px", padding:"12px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"700" }}>ðŸ–¨ï¸ Open Print Dialog</button>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Share Modal ───────────────────────────────────────────────────────────────
+// â”€â”€ Share Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ShareModal({ report, onClose }) {
   const [copied,   setCopied]   = useState(false);
   const [notified, setNotified] = useState(false);
@@ -319,9 +319,9 @@ function ShareModal({ report, onClose }) {
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:"20px" }}>
       <div onClick={e => e.stopPropagation()} style={{ background:"#1e293b", border:"1px solid #334155", borderRadius:"16px", padding:"32px", width:"100%", maxWidth:"460px", position:"relative" }}>
-        <button onClick={onClose} style={{ position:"absolute", top:"16px", right:"16px", background:"#334155", border:"none", borderRadius:"6px", color:"#94a3b8", fontSize:"18px", cursor:"pointer", width:"32px", height:"32px" }}>×</button>
+        <button onClick={onClose} style={{ position:"absolute", top:"16px", right:"16px", background:"#334155", border:"none", borderRadius:"6px", color:"#94a3b8", fontSize:"18px", cursor:"pointer", width:"32px", height:"32px" }}>Ã—</button>
 
-        <h2 style={{ color:"white", fontSize:"18px", fontWeight:"700", marginBottom:"6px" }}>📤 Share Report</h2>
+        <h2 style={{ color:"white", fontSize:"18px", fontWeight:"700", marginBottom:"6px" }}>ðŸ“¤ Share Report</h2>
         <p style={{ color:"#64748b", fontSize:"13px", marginBottom:"24px" }}>{report.name}</p>
 
         <div style={{ marginBottom:"18px" }}>
@@ -332,7 +332,7 @@ function ShareModal({ report, onClose }) {
             </div>
             <button onClick={() => { navigator.clipboard.writeText(shareLink); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
               style={{ background: copied ? "#16a34a" : "#2563eb", border:"none", borderRadius:"8px", padding:"10px 16px", color:"white", fontSize:"13px", cursor:"pointer", fontWeight:"600", minWidth:"80px" }}>
-              {copied ? "✅ Copied!" : "📋 Copy"}
+              {copied ? "âœ… Copied!" : "ðŸ“‹ Copy"}
             </button>
           </div>
         </div>
@@ -344,13 +344,13 @@ function ShareModal({ report, onClose }) {
               style={{ flex:1, background:"#0f172a", border:"1px solid #334155", borderRadius:"8px", padding:"10px 14px", color:"white", fontSize:"13px", outline:"none" }} />
             <button onClick={() => { setNotified(true); setTimeout(() => setNotified(false), 2000); }}
               style={{ background: notified ? "#16a34a" : "#334155", border:"none", borderRadius:"8px", padding:"10px 16px", color:"white", fontSize:"13px", cursor:"pointer", fontWeight:"600", minWidth:"80px" }}>
-              {notified ? "✅ Sent!" : "📨 Send"}
+              {notified ? "âœ… Sent!" : "ðŸ“¨ Send"}
             </button>
           </div>
         </div>
 
         <div style={{ background:"#0f172a", borderRadius:"8px", padding:"12px", border:"1px solid #1e3a5f", display:"flex", gap:"10px" }}>
-          <span>🔒</span>
+          <span>ðŸ”’</span>
           <p style={{ color:"#64748b", fontSize:"12px", margin:0, lineHeight:"1.5" }}>Only AFCIP users can view shared reports. Link expires in 7 days.</p>
         </div>
       </div>
@@ -358,13 +358,13 @@ function ShareModal({ report, onClose }) {
   );
 }
 
-// ── Archive Confirm ───────────────────────────────────────────────────────────
+// â”€â”€ Archive Confirm â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ArchiveModal({ report, onClose, onConfirm }) {
   if (!report) return null;
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:"20px" }}>
       <div onClick={e => e.stopPropagation()} style={{ background:"#1e293b", border:"1px solid #334155", borderRadius:"16px", padding:"32px", width:"100%", maxWidth:"400px", textAlign:"center" }}>
-        <div style={{ fontSize:"48px", marginBottom:"16px" }}>📦</div>
+        <div style={{ fontSize:"48px", marginBottom:"16px" }}>ðŸ“¦</div>
         <h2 style={{ color:"white", fontSize:"18px", fontWeight:"700", marginBottom:"8px" }}>Archive Report?</h2>
         <p style={{ color:"#94a3b8", fontSize:"14px", marginBottom:"8px" }}>{report.name}</p>
         <p style={{ color:"#64748b", fontSize:"13px", marginBottom:"28px", lineHeight:"1.5" }}>
@@ -373,14 +373,14 @@ function ArchiveModal({ report, onClose, onConfirm }) {
         <div style={{ display:"flex", gap:"12px" }}>
           <button onClick={onClose} style={{ flex:1, background:"#334155", border:"none", borderRadius:"8px", padding:"12px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>Cancel</button>
           <button onClick={() => { onConfirm(report.id); onClose(); }}
-            style={{ flex:1, background:"#c4b5fd", border:"none", borderRadius:"8px", padding:"12px", color:"#1e1b4b", fontSize:"14px", cursor:"pointer", fontWeight:"700" }}>📦 Archive</button>
+            style={{ flex:1, background:"#c4b5fd", border:"none", borderRadius:"8px", padding:"12px", color:"#1e1b4b", fontSize:"14px", cursor:"pointer", fontWeight:"700" }}>ðŸ“¦ Archive</button>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Reports() {
   const { transactions, fraudAlerts, stats, source, loading } = useOperationalData();
 
@@ -452,17 +452,17 @@ function Reports() {
       {/* Archive toast */}
       {archiveToast && (
         <div style={{ position:"fixed", bottom:"32px", left:"50%", transform:"translateX(-50%)", background:"#3b1f5e", border:"1px solid #c4b5fd", borderRadius:"10px", padding:"12px 24px", color:"#c4b5fd", fontSize:"14px", fontWeight:"600", zIndex:999, boxShadow:"0 4px 20px rgba(0,0,0,0.5)" }}>
-          📦 Report archived successfully
+          ðŸ“¦ Report archived successfully
         </div>
       )}
 
       {/* Stats */}
       <div style={{ display:"flex", gap:"20px", marginBottom:"32px" }}>
         {[
-          { label:"Total Reports",   value: allReports.length,                                      color:"#38bdf8", icon:"📄" },
-          { label:"Generated Today", value: generatedReports.length,                                color:"#4ade80", icon:"⚡" },
-          { label:"Data Source",     value: source === "live" ? "Live" : "Demo",                    color: source === "live" ? "#4ade80" : "#fb923c", icon: source === "live" ? "🟢" : "🟡" },
-          { label:"Archived",        value: archivedIds.length,                                     color:"#c4b5fd", icon:"📦" },
+          { label:"Total Reports",   value: allReports.length,                                      color:"#38bdf8", icon:"ðŸ“„" },
+          { label:"Generated Today", value: generatedReports.length,                                color:"#4ade80", icon:"âš¡" },
+          { label:"Data Source",     value: source === "live" ? "Live" : "Demo",                    color: source === "live" ? "#4ade80" : "#fb923c", icon: source === "live" ? "ðŸŸ¢" : "ðŸŸ¡" },
+          { label:"Archived",        value: archivedIds.length,                                     color:"#c4b5fd", icon:"ðŸ“¦" },
         ].map(({ label, value, color, icon }) => (
           <div key={label} style={{ flex:1, background:"#1e293b", border:"1px solid #334155", borderRadius:"12px", padding:"24px" }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"12px" }}>
@@ -487,7 +487,7 @@ function Reports() {
         <div style={{ display:"flex", gap:"10px" }}>
           <button onClick={() => exportToCSV(transactions, "all_transactions.csv")}
             style={{ background:"#16a34a", border:"none", borderRadius:"8px", padding:"8px 18px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>
-            ⬇️ Export All CSV
+            â¬‡ï¸ Export All CSV
           </button>
           <button onClick={() => setShowGenerate(true)}
             style={{ background:"#2563eb", border:"none", borderRadius:"8px", padding:"8px 18px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>
@@ -502,7 +502,7 @@ function Reports() {
         <div style={{ background:"#1e293b", border:"1px solid #334155", borderRadius:"12px", overflow:"hidden" }}>
           {loading && (
             <div style={{ padding:"10px 16px", background:"#0f2040", color:"#38bdf8", fontSize:"13px", borderBottom:"1px solid #334155" }}>
-              ⏳ Loading live data…
+              â³ Loading live dataâ€¦
             </div>
           )}
           <table style={{ width:"100%", borderCollapse:"collapse", fontSize:"14px" }}>
@@ -523,8 +523,8 @@ function Reports() {
                     <div style={{ color:"white", fontWeight:"600" }}>{report.name}</div>
                     <div style={{ color:"#64748b", fontSize:"12px" }}>
                       {report.id}
-                      {report.source === "live" && <span style={{ color:"#4ade80", marginLeft:"6px" }}>🟢 live</span>}
-                      {report.source === "demo" && <span style={{ color:"#fb923c", marginLeft:"6px" }}>🟡 demo</span>}
+                      {report.source === "live" && <span style={{ color:"#4ade80", marginLeft:"6px" }}>ðŸŸ¢ live</span>}
+                      {report.source === "demo" && <span style={{ color:"#fb923c", marginLeft:"6px" }}>ðŸŸ¡ demo</span>}
                     </div>
                   </td>
                   <td style={{ padding:"14px 16px" }}>
@@ -534,9 +534,9 @@ function Reports() {
                   <td style={{ padding:"14px 16px", color:"#94a3b8" }}>{report.author}</td>
                   <td style={{ padding:"14px 16px" }}>
                     <div style={{ display:"flex", gap:"8px" }}>
-                      <button onClick={e => { e.stopPropagation(); setViewModal(report); }}  style={{ background:"none", border:"none", cursor:"pointer", fontSize:"16px" }} title="View">👁️</button>
-                      <button onClick={e => { e.stopPropagation(); handleDownload(report); }} style={{ background:"none", border:"none", cursor:"pointer", fontSize:"16px" }} title="Download CSV">{downloaded === report.id ? "✅" : "⬇️"}</button>
-                      <button onClick={e => { e.stopPropagation(); setPrintModal(report); }}  style={{ background:"none", border:"none", cursor:"pointer", fontSize:"16px" }} title="Print">🖨️</button>
+                      <button onClick={e => { e.stopPropagation(); setViewModal(report); }}  style={{ background:"none", border:"none", cursor:"pointer", fontSize:"16px" }} title="View">ðŸ‘ï¸</button>
+                      <button onClick={e => { e.stopPropagation(); handleDownload(report); }} style={{ background:"none", border:"none", cursor:"pointer", fontSize:"16px" }} title="Download CSV">{downloaded === report.id ? "âœ…" : "â¬‡ï¸"}</button>
+                      <button onClick={e => { e.stopPropagation(); setPrintModal(report); }}  style={{ background:"none", border:"none", cursor:"pointer", fontSize:"16px" }} title="Print">ðŸ–¨ï¸</button>
                     </div>
                   </td>
                 </tr>
@@ -578,23 +578,23 @@ function Reports() {
               <div style={{ display:"flex", flexDirection:"column", gap:"8px" }}>
                 <button onClick={() => handleDownload(selectedReport)}
                   style={{ background:"#16a34a", border:"none", borderRadius:"8px", padding:"10px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>
-                  {downloaded === selectedReport.id ? "✅ Downloaded!" : "⬇️ Download CSV"}
+                  {downloaded === selectedReport.id ? "âœ… Downloaded!" : "â¬‡ï¸ Download CSV"}
                 </button>
                 <button onClick={() => setViewModal(selectedReport)}
                   style={{ background:"#2563eb", border:"none", borderRadius:"8px", padding:"10px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>
-                  👁️ View Report
+                  ðŸ‘ï¸ View Report
                 </button>
                 <button onClick={() => setPrintModal(selectedReport)}
                   style={{ background:"#334155", border:"none", borderRadius:"8px", padding:"10px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>
-                  🖨️ Print Report
+                  ðŸ–¨ï¸ Print Report
                 </button>
                 <button onClick={() => setShareModal(selectedReport)}
                   style={{ background:"#334155", border:"none", borderRadius:"8px", padding:"10px", color:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>
-                  📤 Share Report
+                  ðŸ“¤ Share Report
                 </button>
                 <button onClick={() => setArchiveModal(selectedReport)}
                   style={{ background:"#334155", border:"none", borderRadius:"8px", padding:"10px", color:"#c4b5fd", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>
-                  📦 Archive
+                  ðŸ“¦ Archive
                 </button>
               </div>
             </div>

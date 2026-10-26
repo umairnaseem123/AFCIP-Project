@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { ShieldOff, ArrowLeft } from "lucide-react";
 
@@ -64,7 +64,7 @@ function NotFound() {
       </div>
 
       <div style={{ color: theme.subtext, fontSize: "12px", marginTop: "8px" }}>
-        AFCIP v2.1 · Secure Intelligence Platform
+        AFCIP v2.1 Â· Secure Intelligence Platform
       </div>
     </div>
   );

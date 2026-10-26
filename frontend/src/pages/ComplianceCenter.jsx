@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import { useTheme } from "../context/ThemeContext";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 function StatusBadge({ status }) {
   const colors = {
@@ -152,8 +152,8 @@ function ComplianceCenter() {
                 sarReports.map((r) => (
                   <tr key={r.id} style={{ borderBottom: "1px solid #0f172a" }}>
                     <td style={{ padding: "12px", color: "#38bdf8", fontWeight: "600" }}>{r.reference_number || `SAR-${r.id}`}</td>
-                    <td style={{ padding: "12px", color: "white" }}>{r.account || r.user || "—"}</td>
-                    <td style={{ padding: "12px", color: theme.subtext }}>{r.reason || "—"}</td>
+                    <td style={{ padding: "12px", color: "white" }}>{r.account || r.user || "â€”"}</td>
+                    <td style={{ padding: "12px", color: theme.subtext }}>{r.reason || "â€”"}</td>
                     <td style={{ padding: "12px" }}><StatusBadge status={r.status || "Draft"} /></td>
                     <td style={{ padding: "12px" }}>
                       {r.status !== "Submitted" && (
@@ -185,7 +185,7 @@ function ComplianceCenter() {
                 ctrReports.map((r) => (
                   <tr key={r.id} style={{ borderBottom: "1px solid #0f172a" }}>
                     <td style={{ padding: "12px", color: "#38bdf8", fontWeight: "600" }}>{r.reference_number || `CTR-${r.id}`}</td>
-                    <td style={{ padding: "12px", color: "white" }}>{r.account || r.user || "—"}</td>
+                    <td style={{ padding: "12px", color: "white" }}>{r.account || r.user || "â€”"}</td>
                     <td style={{ padding: "12px", color: "white" }}>PKR {Number(r.amount || 0).toLocaleString()}</td>
                     <td style={{ padding: "12px" }}><StatusBadge status={r.status || "Pending"} /></td>
                     <td style={{ padding: "12px" }}>
@@ -217,11 +217,11 @@ function ComplianceCenter() {
               ) : (
                 structuring.map((s) => (
                   <tr key={s.id} style={{ borderBottom: "1px solid #0f172a" }}>
-                    <td style={{ padding: "12px", color: "white" }}>{s.account || s.user || "—"}</td>
+                    <td style={{ padding: "12px", color: "white" }}>{s.account || s.user || "â€”"}</td>
                     <td style={{ padding: "12px", color: "#f87171" }}>{s.pattern || "Smurfing"}</td>
-                    <td style={{ padding: "12px", color: theme.subtext }}>{s.transaction_count ?? "—"}</td>
+                    <td style={{ padding: "12px", color: theme.subtext }}>{s.transaction_count ?? "â€”"}</td>
                     <td style={{ padding: "12px", color: "white" }}>PKR {Number(s.total_amount || 0).toLocaleString()}</td>
-                    <td style={{ padding: "12px", color: theme.subtext }}>{s.created_at ? new Date(s.created_at).toLocaleString() : "—"}</td>
+                    <td style={{ padding: "12px", color: theme.subtext }}>{s.created_at ? new Date(s.created_at).toLocaleString() : "â€”"}</td>
                   </tr>
                 ))
               )}
@@ -234,3 +234,4 @@ function ComplianceCenter() {
 }
 
 export default ComplianceCenter;
+
